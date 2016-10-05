@@ -1,0 +1,43 @@
+{
+	"title":	"Braintree",
+	"app":		"Braintree",
+	"vendor":	"PayPal",
+	"version":	"2.0.0",
+	"req_core_version":	"2.4",
+	"license":	"BSD",
+	"authors": [
+		{
+			"name":		"Harald Ponce de Leon",
+			"company":	"osCommerce",
+			"email":	"hpdl@oscommerce.com",
+			"website":	"https://www.oscommerce.com"
+		}
+	],
+	"modules": {
+		"AdminMenu": {
+			"Braintree":	"Module\\Admin\\Menu\\Braintree"
+		},
+		"Content": {
+			"account": {
+				"BT":	"Module\\Content\\Account\\BT"
+			}
+		},
+		"Hooks": {
+			"Admin/Orders": {
+				"Action":	"Module\\Hooks\\Admin\\Orders\\Action",
+				"Page":		"Module\\Hooks\\Admin\\Orders\\PageTab"
+			}
+		},
+		"Payment": {
+			"BT":	"Module\\Payment\\BT"
+		}
+	},
+	"routes": {
+		"Admin":	"Sites\\Admin\\Pages\\Home",
+		"Shop": {
+			"order&callback&paypal&bt":					"Sites\\Shop\\Pages\\BT",
+			"order&callback&paypal&bt&getCardToken":	"Sites\\Shop\\Pages\\BTGetCardToken",
+			"account&stored-cards":						"Sites\\Shop\\Pages\\StoredCards"
+		}
+	}
+}

@@ -1,0 +1,19 @@
+module_content_account_title = Braintree Cards Management Page
+module_content_account_description = Adds a Braintree Cards management page to the My Account area.
+
+module_content_account_legacy_admin_app_button = Manage App
+
+module_content_account_error_main_app = This module will not load until the Braintree App has been installed, configured, and is enabled.
+
+module_content_account_public_title = Manage saved payment cards.
+
+module_content_account_navbar_title_1 = My Account
+module_content_account_navbar_title_2 = Saved Cards
+
+module_content_account_heading_title = Saved Cards
+module_content_account_text_description = <p>Saved payment cards are stored securely and safely in a certified and audited PCI DSS compliant environment. This high level of security provides convenience in allowing saved cards to be used for next purchases without the card information having to be re-typed again for each order made.</p><p>New cards can be securely saved during the process of your next order.</p>
+
+module_content_account_cards_title = Saved Cards
+module_content_account_no_cards = <p>No cards have been saved yet.</p>
+
+module_content_account_card_deleted = The card has been successfully deleted.

@@ -1,0 +1,4 @@
+admin_menu_title = Braintree
+
+admin_menu_configuration = Configuration
+admin_menu_credentials = Credentials

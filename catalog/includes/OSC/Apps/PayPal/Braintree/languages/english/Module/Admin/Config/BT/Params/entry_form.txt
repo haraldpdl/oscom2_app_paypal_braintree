@@ -1,0 +1,5 @@
+cfg_bt_entry_form_title = Entry Form
+cfg_bt_entry_form_desc = Which method should be used to accept the card payment details (card number, expiry date, ..).
+
+cfg_bt_entry_form_drop_in = Drop-in
+cfg_bt_entry_form_hosted_fields = Hosted Fields

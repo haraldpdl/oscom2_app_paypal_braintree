@@ -1,0 +1,2 @@
+cfg_bt_content_account_sort_order_title = Sort Order
+cfg_bt_content_account_sort_order_desc = Sort order of display. Lowest is displayed first.
