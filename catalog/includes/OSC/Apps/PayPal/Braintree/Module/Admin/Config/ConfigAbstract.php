@@ -69,7 +69,7 @@ abstract class ConfigAbstract
     {
         $result = [];
 
-        $directory = OSCOM::BASE_DIR . 'OSC/Apps/PayPal/Braintree/Module/Admin/Config/' . $this->code . '/Params';
+        $directory = OSCOM::BASE_DIR . 'Apps/PayPal/Braintree/Module/Admin/Config/' . $this->code . '/Params';
 
         if ($dir = new \DirectoryIterator($directory)) {
             foreach ($dir as $file) {

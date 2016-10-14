@@ -6,7 +6,7 @@ use OSC\OM\Registry;
 $OSCOM_Braintree = Registry::get('Braintree');
 
 if (!class_exists('currencies')) {
-    require(OSCOM::BASE_DIR . 'classes/currencies.php');
+    require(OSCOM::getConfig('dir_root', 'Shop') . 'includes/classes/currencies.php');
 }
 
 $ma_data = [];

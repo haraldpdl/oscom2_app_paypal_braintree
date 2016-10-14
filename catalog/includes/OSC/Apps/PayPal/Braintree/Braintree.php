@@ -15,7 +15,7 @@ class Braintree extends \OSC\OM\AppAbstract
     protected function init()
     {
         if (!class_exists('\Braintree', false)) {
-            include(OSCOM::BASE_DIR . 'OSC/Apps/PayPal/Braintree/lib/Braintree.php');
+            include(OSCOM::BASE_DIR . 'Apps/PayPal/Braintree/lib/Braintree.php');
         }
 
         $this->installCheck();

@@ -249,7 +249,7 @@ class BT extends \OSC\OM\PagesAbstract
                         $_SESSION['customer_zone_id'] = $ship_zone_id;
                     }
 
-                    include(OSCOM::BASE_DIR . 'classes/order.php');
+                    include(OSCOM::getConfig('dir_root', 'Shop') . 'includes/classes/order.php');
                     $order = new \order();
 
                     if ($_SESSION['cart']->get_content_type() != 'virtual') {
@@ -257,7 +257,7 @@ class BT extends \OSC\OM\PagesAbstract
                         $total_count = $_SESSION['cart']->count_contents();
 
 // load all enabled shipping modules
-                        include(OSCOM::BASE_DIR . 'classes/shipping.php');
+                        include(OSCOM::getConfig('dir_root', 'Shop') . 'includes/classes/shipping.php');
                         $shipping_modules = new \shipping();
 
                         $free_shipping = false;
@@ -286,7 +286,7 @@ class BT extends \OSC\OM\PagesAbstract
                             if (($pass == true) && ($order->info['total'] >= MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER)) {
                                 $free_shipping = true;
 
-                                include(OSCOM::BASE_DIR . 'languages/' . $_SESSION['language'] . '/modules/order_total/ot_shipping.php');
+                                include(OSCOM::getConfig('dir_root', 'Shop') . 'includes/languages/' . $_SESSION['language'] . '/modules/order_total/ot_shipping.php');
                             }
                         }
 
