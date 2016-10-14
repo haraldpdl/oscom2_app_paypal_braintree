@@ -62,7 +62,7 @@ class BT implements \OSC\OM\Modules\ContentInterface
 
         $oscTemplate->_data['account']['account']['links']['braintree_cards'] = [
             'title' => $this->public_title,
-            'link' => OSCOM::link('index.php', 'account&stored-cards', '', 'SSL'),
+            'link' => OSCOM::link('index.php', 'account&stored-cards', 'SSL'),
             'icon' => 'fa fa-fw fa-credit-card'
         ];
     }
