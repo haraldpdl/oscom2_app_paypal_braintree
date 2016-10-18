@@ -38,7 +38,7 @@ class BT implements \OSC\OM\Modules\PaymentInterface {
         $this->code = 'BT';
         $this->title = $this->app->getDef('title');
         $this->public_title = $this->app->getDef('public_title');
-        $this->description = '<div align="center">' . HTML::button($this->app->getDef('button_app_legacy'), null, $this->app->link('Configuration'), null, null, 'btn-primary') . '</div>';
+        $this->description = '<div align="center">' . HTML::button($this->app->getDef('button_app_legacy'), null, $this->app->link('Configuration'), null, 'btn-primary') . '</div>';
         $this->sort_order = defined('OSCOM_APP_PAYPAL_BT_SORT_ORDER') ? OSCOM_APP_PAYPAL_BT_SORT_ORDER : 0;
         $this->enabled = defined('OSCOM_APP_PAYPAL_BT_STATUS') && in_array(OSCOM_APP_PAYPAL_BT_STATUS, ['1', '0']) ? true : false;
         $this->order_status = defined('OSCOM_APP_PAYPAL_BT_ORDER_STATUS_ID') && ((int)OSCOM_APP_PAYPAL_BT_ORDER_STATUS_ID > 0) ? (int)OSCOM_APP_PAYPAL_BT_ORDER_STATUS_ID : 0;

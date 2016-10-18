@@ -67,11 +67,11 @@ class PageTab implements \OSC\OM\Modules\HooksInterface
 
                 $pp_server = (strpos(strtolower($Qorder->value('payment_method')), 'sandbox') !== false) ? 'sandbox' : 'live';
 
-                $info_button = HTML::button($this->app->getDef('button_details'), 'fa fa-info-circle', OSCOM::link('orders.php', 'page=' . $_GET['page'] . '&oID=' . $oID . '&action=edit&tabaction=getTransactionDetails'), 'primary', null, 'btn-primary');
+                $info_button = HTML::button($this->app->getDef('button_details'), 'fa fa-info-circle', OSCOM::link('orders.php', 'page=' . $_GET['page'] . '&oID=' . $oID . '&action=edit&tabaction=getTransactionDetails'), null, 'btn-primary');
                 $capture_button = $this->getCaptureButton($status, $Qorder->toArray());
                 $void_button = $this->getVoidButton($status, $Qorder->toArray());
                 $refund_button = $this->getRefundButton($status, $Qorder->toArray());
-                $braintree_button = HTML::button($this->app->getDef('button_view_at_braintree'), 'fa fa-external-link', 'https://' . ($pp_server == 'sandbox' ? 'sandbox.' : '') . 'braintreegateway.com/merchants/' . ($pp_server == 'sandbox' ? OSCOM_APP_PAYPAL_BRAINTREE_SANDBOX_MERCHANT_ID : OSCOM_APP_PAYPAL_BRAINTREE_MERCHANT_ID) . '/transactions/' . $status['Transaction ID'], 'info', ['newwindow' => true], 'btn-info');
+                $braintree_button = HTML::button($this->app->getDef('button_view_at_braintree'), 'fa fa-external-link', 'https://' . ($pp_server == 'sandbox' ? 'sandbox.' : '') . 'braintreegateway.com/merchants/' . ($pp_server == 'sandbox' ? OSCOM_APP_PAYPAL_BRAINTREE_SANDBOX_MERCHANT_ID : OSCOM_APP_PAYPAL_BRAINTREE_MERCHANT_ID) . '/transactions/' . $status['Transaction ID'], ['newwindow' => true], 'btn-info');
 
                 $tab_title = addslashes($this->app->getDef('tab_title'));
 
@@ -109,7 +109,7 @@ EOD;
                 $Qc->execute();
 
                 if ($Qc->fetch() === false) {
-                    $output .= HTML::button($this->app->getDef('button_dialog_capture'), 'fa fa-check-circle', '#', null, ['params' => 'data-button="braintreeButtonDoCapture"'], 'btn-success');
+                    $output .= HTML::button($this->app->getDef('button_dialog_capture'), 'fa fa-check-circle', '#', ['params' => 'data-button="braintreeButtonDoCapture"'], 'btn-success');
 
                     $dialog_title = HTML::outputProtected($this->app->getDef('dialog_capture_title'));
                     $dialog_body = $this->app->getDef('dialog_capture_body');
@@ -208,7 +208,7 @@ EOD;
                 $Qv->execute();
 
                 if ($Qv->fetch() === false) {
-                    $output .= HTML::button($this->app->getDef('button_dialog_void'), 'fa fa-times-circle', '#', null, ['params' => 'data-button="braintreeButtonDoVoid"'], 'btn-warning');
+                    $output .= HTML::button($this->app->getDef('button_dialog_void'), 'fa fa-times-circle', '#', ['params' => 'data-button="braintreeButtonDoVoid"'], 'btn-warning');
 
                     $dialog_title = HTML::outputProtected($this->app->getDef('dialog_void_title'));
                     $dialog_body = $this->app->getDef('dialog_void_body');
@@ -298,7 +298,7 @@ EOD;
                 }
 
                 if ($refund_total > 0) {
-                    $output .= HTML::button($this->app->getDef('button_dialog_refund'), 'fa fa-minus-circle', '#', null, ['params' => 'data-button="braintreeButtonDoRefund"'], 'btn-danger');
+                    $output .= HTML::button($this->app->getDef('button_dialog_refund'), 'fa fa-minus-circle', '#', ['params' => 'data-button="braintreeButtonDoRefund"'], 'btn-danger');
 
                     $dialog_title = HTML::outputProtected($this->app->getDef('dialog_refund_title'));
                     $dialog_body = $this->app->getDef('dialog_refund_body');

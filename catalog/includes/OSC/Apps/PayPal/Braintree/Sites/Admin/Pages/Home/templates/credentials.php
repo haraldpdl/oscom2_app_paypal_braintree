@@ -173,7 +173,7 @@ echo HTML::hiddenField('oscom_app_paypal_braintree_sandbox_currencies_ma', OSCOM
   </div>
 </div>
 
-<p><?= HTML::button($OSCOM_Braintree->getDef('button_save'), null, null, null, null, 'btn-success'); ?></p>
+<p><?= HTML::button($OSCOM_Braintree->getDef('button_save'), null, null, null, 'btn-success'); ?></p>
 
 </form>
 

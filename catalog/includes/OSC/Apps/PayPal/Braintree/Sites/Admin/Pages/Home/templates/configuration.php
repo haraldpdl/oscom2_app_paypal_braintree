@@ -31,6 +31,6 @@ foreach ($OSCOM_Braintree_Config->getInputParameters() as $cfg) {
   </div>
 </div>
 
-<p><?= HTML::button($OSCOM_Braintree->getDef('button_save'), null, null, null, null, 'btn-success'); ?></p>
+<p><?= HTML::button($OSCOM_Braintree->getDef('button_save'), null, null, null, 'btn-success'); ?></p>
 
 </form>

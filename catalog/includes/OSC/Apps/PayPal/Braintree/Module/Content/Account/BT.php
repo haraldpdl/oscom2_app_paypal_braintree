@@ -31,7 +31,7 @@ class BT implements \OSC\OM\Modules\ContentInterface
         $this->group = 'account';
 
         $this->title = $this->app->getDef('module_content_account_title');
-        $this->description = '<div align="center">' . HTML::button($this->app->getDef('module_content_account_legacy_admin_app_button'), null, $this->app->link('Configuration'), null, null, 'btn-primary') . '</div>';
+        $this->description = '<div align="center">' . HTML::button($this->app->getDef('module_content_account_legacy_admin_app_button'), null, $this->app->link('Configuration'), null, 'btn-primary') . '</div>';
 
         $this->sort_order = defined('OSCOM_APP_PAYPAL_BT_CONTENT_ACCOUNT_SORT_ORDER') ? OSCOM_APP_PAYPAL_BT_CONTENT_ACCOUNT_SORT_ORDER : 0;
         $this->enabled = defined('OSCOM_APP_PAYPAL_BT_STATUS') && in_array(OSCOM_APP_PAYPAL_BT_STATUS, ['0', '1']);
