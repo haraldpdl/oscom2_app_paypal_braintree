@@ -182,6 +182,8 @@ class BT implements \OSC\OM\Modules\PaymentInterface {
 
             $enableShippingAddress = in_array($_SESSION['cart']->get_content_type(), ['physical', 'mixed']) ? 'true' : 'false';
 
+            $intent = (OSCOM_APP_PAYPAL_BT_TRANSACTION_METHOD == '1') ? 'sale' : 'authorize';
+
             $oscTemplate->addBlock('<script src="https://js.braintreegateway.com/web/3.2.0/js/client.min.js"></script><script src="https://js.braintreegateway.com/web/3.2.0/js/paypal.min.js"></script>', 'footer_scripts');
 
             $content = <<<EOD
@@ -224,6 +226,7 @@ $(function() {
           currency: '{$currency}',
           enableShippingAddress: {$enableShippingAddress},
           enableBillingAddress: true,
+          intent: '{$intent}'
         }, function (tokenizeErr, payload) {
           if (tokenizeErr) {
             return;
