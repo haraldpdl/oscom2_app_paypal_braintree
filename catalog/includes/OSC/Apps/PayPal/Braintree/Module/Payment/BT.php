@@ -500,7 +500,8 @@ EOD;
         if (isset($_SESSION['appPayPalBtNonce'])) {
             $data = [
                 'amount' => $this->app->formatCurrencyRaw($order->info['total'], $currency),
-                'paymentMethodNonce' => $_SESSION['appPayPalBtNonce']
+                'paymentMethodNonce' => $_SESSION['appPayPalBtNonce'],
+                'merchantAccountId' => $this->getMerchantAccountId($currency)
             ];
         } else {
             $data = [
