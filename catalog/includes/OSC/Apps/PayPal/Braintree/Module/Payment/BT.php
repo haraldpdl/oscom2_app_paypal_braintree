@@ -33,7 +33,7 @@ class BT implements \OSC\OM\Modules\PaymentInterface {
 
         $this->app = Registry::get('Braintree');
 
-        $this->app->loadDefinitionFile('Module/Payment/BT.txt');
+        $this->app->loadDefinitions('Module/Payment/BT');
 
         $this->code = 'BT';
         $this->title = $this->app->getDef('title');
@@ -128,7 +128,7 @@ class BT implements \OSC\OM\Modules\PaymentInterface {
             unset($_SESSION['appPayPalBtRightTurn']);
 
             if (isset($_SESSION['payment']) && ($_SESSION['payment'] == $this->app->vendor . '\\' . $this->app->code . '\\' . $this->code)) {
-                OSCOM::redirect('checkout_confirmation.php', '', 'SSL');
+                OSCOM::redirect('checkout_confirmation.php');
             }
         }
     }
@@ -177,7 +177,7 @@ class BT implements \OSC\OM\Modules\PaymentInterface {
             $amount = $this->app->formatCurrencyRaw($_SESSION['cart']->show_total(), $_SESSION['currency']);
             $currency = $_SESSION['currency'];
 
-            $formUrl = OSCOM::link('index.php', 'order&callback&paypal&bt', 'SSL');
+            $formUrl = OSCOM::link('index.php', 'order&callback&paypal&bt');
             $formHash = $_SESSION['appPayPalBtFormHash'] = Hash::getRandomString(16);
 
             $enableShippingAddress = in_array($_SESSION['cart']->get_content_type(), ['physical', 'mixed']) ? 'true' : 'false';
@@ -593,7 +593,7 @@ EOD;
 
         $messageStack->add_session('checkout_confirmation', $message);
 
-        OSCOM::redirect('checkout_confirmation.php', null, 'SSL');
+        OSCOM::redirect('checkout_confirmation.php');
     }
 
     public function after_process()
@@ -746,7 +746,7 @@ EOD;
 
         $order_total = $this->app->formatCurrencyRaw($order->info['total'], $_SESSION['currency']);
 
-        $getCardTokenRpcUrl = OSCOM::link('index.php', 'order&callback&paypal&bt&getCardToken', 'SSL');
+        $getCardTokenRpcUrl = OSCOM::link('index.php', 'order&callback&paypal&bt&getCardToken');
 
         if (OSCOM_APP_PAYPAL_BT_THREE_D_SECURE === '1') {
             $has3ds = 'all';

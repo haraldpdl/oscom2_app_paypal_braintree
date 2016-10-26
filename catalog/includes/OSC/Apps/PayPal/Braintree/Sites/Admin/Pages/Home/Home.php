@@ -23,7 +23,7 @@ class Home extends \OSC\OM\PagesAbstract
 
         $this->app = $OSCOM_Braintree;
 
-        $this->app->loadDefinitionFile('Sites/Admin.txt');
+        $this->app->loadDefinitions('Sites/Admin');
 
         if (!$this->isActionRequest()) {
             $this->runAction('Configuration');

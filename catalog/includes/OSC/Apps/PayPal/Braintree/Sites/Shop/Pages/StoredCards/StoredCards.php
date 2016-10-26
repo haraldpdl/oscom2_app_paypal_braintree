@@ -24,20 +24,20 @@ class StoredCards extends \OSC\OM\PagesAbstract
         if (!isset($_SESSION['customer_id'])) {
             $_SESSION['navigation']->set_snapshot();
 
-            OSCOM::redirect('login.php', '', 'SSL');
+            OSCOM::redirect('login.php');
         }
 
         if (defined('MODULE_PAYMENT_INSTALLED') && !empty(MODULE_PAYMENT_INSTALLED) && in_array('PayPal\Braintree\BT', explode(';', MODULE_PAYMENT_INSTALLED))) {
             $this->pm = new PaymentModuleBT();
 
             if (!$this->pm->enabled) {
-                OSCOM::redirect('account.php', '', 'SSL');
+                OSCOM::redirect('account.php');
             }
         } else {
-            OSCOM::redirect('account.php', '', 'SSL');
+            OSCOM::redirect('account.php');
         }
 
-        $this->pm->app->loadDefinitionFile('Module/Content/Account/BT.txt');
+        $this->pm->app->loadDefinitions('Module/Content/Account/BT');
 
         if (isset($_GET['action'])) {
             if (($_GET['action'] == 'delete') && isset($_GET['id']) && is_numeric($_GET['id']) && isset($_GET['formid']) && ($_GET['formid'] == md5($_SESSION['sessiontoken']))) {
@@ -56,10 +56,10 @@ class StoredCards extends \OSC\OM\PagesAbstract
                 }
             }
 
-            OSCOM::redirect('index.php', 'account&stored-cards', 'SSL');
+            OSCOM::redirect('index.php', 'account&stored-cards');
         }
 
-        $breadcrumb->add($this->pm->app->getDef('module_content_account_navbar_title_1'), OSCOM::link('account.php', '', 'SSL'));
-        $breadcrumb->add($this->pm->app->getDef('module_content_account_navbar_title_2'), OSCOM::link('index.php', 'account&stored-cards', 'SSL'));
+        $breadcrumb->add($this->pm->app->getDef('module_content_account_navbar_title_1'), OSCOM::link('account.php'));
+        $breadcrumb->add($this->pm->app->getDef('module_content_account_navbar_title_2'), OSCOM::link('index.php', 'account&stored-cards'));
     }
 }

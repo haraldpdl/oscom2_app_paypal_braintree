@@ -25,7 +25,7 @@ class BT implements \OSC\OM\Modules\ContentInterface
         }
 
         $this->app = Registry::get('Braintree');
-        $this->app->loadDefinitionFile('Module/Content/Account/BT.txt');
+        $this->app->loadDefinitions('Module/Content/Account/BT');
 
         $this->code = 'BT';
         $this->group = 'account';
@@ -62,7 +62,7 @@ class BT implements \OSC\OM\Modules\ContentInterface
 
         $oscTemplate->_data['account']['account']['links']['braintree_cards'] = [
             'title' => $this->public_title,
-            'link' => OSCOM::link('index.php', 'account&stored-cards', 'SSL'),
+            'link' => OSCOM::link('index.php', 'account&stored-cards'),
             'icon' => 'fa fa-fw fa-credit-card'
         ];
     }

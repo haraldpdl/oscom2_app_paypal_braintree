@@ -36,7 +36,7 @@ if ($Qtokens->fetch() !== false) {
 
     <div class="row">
       <div class="col-xs-12">
-        <span style="float: right;"><?= HTML::button(SMALL_IMAGE_BUTTON_DELETE, 'fa fa-trash', OSCOM::link('index.php', 'account&stored-cards&action=delete&id=' . $Qtokens->valueInt('id') . '&formid=' . md5($_SESSION['sessiontoken']), 'SSL')); ?></span>
+        <span style="float: right;"><?= HTML::button(SMALL_IMAGE_BUTTON_DELETE, 'fa fa-trash', OSCOM::link('index.php', 'account&stored-cards&action=delete&id=' . $Qtokens->valueInt('id') . '&formid=' . md5($_SESSION['sessiontoken']))); ?></span>
         <p><strong><?= $Qtokens->valueProtected('card_type'); ?></strong>&nbsp;&nbsp;****<?= $Qtokens->valueProtected('number_filtered') . '&nbsp;&nbsp;' . HTML::outputProtected(substr($Qtokens->value('expiry_date'), 0, 2) . '/' . substr($Qtokens->value('expiry_date'), 2)); ?></p>
       </div>
     </div>
@@ -57,6 +57,6 @@ if ($Qtokens->fetch() !== false) {
   </div>
 
   <div class="buttonSet">
-    <?= HTML::button(IMAGE_BUTTON_BACK, 'fa fa-angle-left', OSCOM::link('account.php', '', 'SSL')); ?>
+    <?= HTML::button(IMAGE_BUTTON_BACK, 'fa fa-angle-left', OSCOM::link('account.php')); ?>
   </div>
 </div>

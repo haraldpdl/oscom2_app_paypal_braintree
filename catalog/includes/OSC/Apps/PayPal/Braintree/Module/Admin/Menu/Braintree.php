@@ -22,7 +22,7 @@ class Braintree implements \OSC\OM\Modules\AdminMenuInterface
 
         $OSCOM_Braintree = Registry::get('Braintree');
 
-        $OSCOM_Braintree->loadDefinitionFile('Module/Admin/Menu/Braintree.txt');
+        $OSCOM_Braintree->loadDefinitions('Module/Admin/Menu/Braintree');
 
         $menu = [
             [

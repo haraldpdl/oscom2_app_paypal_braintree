@@ -28,7 +28,7 @@ abstract class ConfigParamAbstract extends \OSC\Sites\Admin\ConfigParamAbstract
 
         $this->code = (new \ReflectionClass($this))->getShortName();
 
-        $this->app->loadDefinitionFile('Module/Admin/Config/' . $config_module . '/Params/' . $this->code . '.txt');
+        $this->app->loadDefinitions('Module/Admin/Config/' . $config_module . '/Params/' . $this->code);
 
         parent::__construct();
     }

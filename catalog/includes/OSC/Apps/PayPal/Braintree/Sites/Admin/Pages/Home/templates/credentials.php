@@ -32,7 +32,7 @@ if (!empty(OSCOM_APP_PAYPAL_BRAINTREE_SANDBOX_CURRENCIES_MA)) {
 $currencies = new currencies();
 ?>
 
-<p><a href="<?= $OSCOM_Braintree->link(); ?>"><img src="<?= OSCOM::link('Shop/public/Apps/PayPal/Braintree/images/braintree.png', '', 'AUTO', false); ?>" width="200" /></a></p>
+<p><a href="<?= $OSCOM_Braintree->link(); ?>"><img src="<?= OSCOM::link('Shop/public/Apps/PayPal/Braintree/images/braintree.png', '', false); ?>" width="200" /></a></p>
 
 <h1><a href="<?= $OSCOM_Braintree->link('Credentials'); ?>"><?= $OSCOM_Braintree->getDef('page_title'); ?></a></h1>
 

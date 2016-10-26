@@ -19,10 +19,13 @@ class BT extends \OSC\OM\PagesAbstract
     protected $file = null;
     protected $use_site_template = false;
     protected $pm;
+    protected $lang;
 
     protected function init()
     {
         global $messageStack;
+
+        $this->lang = Registry::get('Language');
 
         if (
             isset($_SESSION['appPayPalBtFormHash']) &&
@@ -286,7 +289,7 @@ class BT extends \OSC\OM\PagesAbstract
                             if (($pass == true) && ($order->info['total'] >= MODULE_ORDER_TOTAL_SHIPPING_FREE_SHIPPING_OVER)) {
                                 $free_shipping = true;
 
-                                include(OSCOM::getConfig('dir_root', 'Shop') . 'includes/languages/' . $_SESSION['language'] . '/modules/order_total/ot_shipping.php');
+                                $this->lang->loadDefinitions('Shop/modules/order_total/ot_shipping');
                             }
                         }
 
@@ -309,7 +312,7 @@ class BT extends \OSC\OM\PagesAbstract
 
                                 $_SESSION['appPayPalBtRightTurn'] = true;
 
-                                OSCOM::redirect('checkout_shipping_address.php', '', 'SSL');
+                                OSCOM::redirect('checkout_shipping_address.php');
                             }
                         }
 
@@ -327,7 +330,7 @@ class BT extends \OSC\OM\PagesAbstract
                                 if (isset($quote['error'])) {
                                     unset($_SESSION['shipping']);
 
-                                    OSCOM::redirect('checkout_shipping.php', '', 'SSL');
+                                    OSCOM::redirect('checkout_shipping.php');
                                 } else {
                                     if ((isset($quote[0]['methods'][0]['title'])) && (isset($quote[0]['methods'][0]['cost']))) {
                                         $_SESSION['shipping'] = [
@@ -345,11 +348,11 @@ class BT extends \OSC\OM\PagesAbstract
                     }
 
                     if (isset($_SESSION['shipping'])) {
-                        OSCOM::redirect('checkout_confirmation.php', '', 'SSL');
+                        OSCOM::redirect('checkout_confirmation.php');
                     } else {
                         $_SESSION['appPayPalBtRightTurn'] = true;
 
-                        OSCOM::redirect('checkout_shipping.php', '', 'SSL');
+                        OSCOM::redirect('checkout_shipping.php');
                     }
                 }
             }
@@ -359,6 +362,6 @@ class BT extends \OSC\OM\PagesAbstract
             unset($_SESSION['appPayPalBtFormHash']);
         }
 
-        OSCOM::redirect('checkout_shipping.php', '', 'SSL');
+        OSCOM::redirect('checkout_shipping.php');
     }
 }

@@ -35,7 +35,7 @@ class PageTab implements \OSC\OM\Modules\HooksInterface
             return false;
         }
 
-        $this->app->loadDefinitionFile('Module/Hooks/Admin/Orders/PageTab.txt');
+        $this->app->loadDefinitions('Module/Hooks/Admin/Orders/PageTab');
 
         $output = '';
 
