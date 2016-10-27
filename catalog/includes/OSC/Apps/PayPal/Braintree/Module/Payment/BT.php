@@ -69,7 +69,7 @@ class BT implements \OSC\OM\Modules\PaymentInterface {
         }
 
         if (!empty($exts)) {
-            $braintree_error = $this->app->getDef('error_php_extensions', [':extensions' => implode('<br />', $exts)]);
+            $braintree_error = $this->app->getDef('error_php_extensions', ['extensions' => implode('<br />', $exts)]);
         }
 
         if (!isset($braintree_error) && defined('OSCOM_APP_PAYPAL_BT_STATUS')) {
@@ -103,7 +103,7 @@ class BT implements \OSC\OM\Modules\PaymentInterface {
             }
 
             if ($ma_error === true) {
-                $braintree_error = $this->app->getDef('error_merchant_account_currency', [':currency' => DEFAULT_CURRENCY]);
+                $braintree_error = $this->app->getDef('error_merchant_account_currency', ['currency' => DEFAULT_CURRENCY]);
             }
         }
 

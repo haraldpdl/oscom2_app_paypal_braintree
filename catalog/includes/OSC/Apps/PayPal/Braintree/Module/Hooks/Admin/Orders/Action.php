@@ -291,7 +291,7 @@ class Action implements \OSC\OM\Modules\HooksInterface
             $this->app->db->save('orders_status_history', $sql_data_array);
 
             $this->ms->add($this->app->getDef('ms_success_doRefund', [
-                ':refund_amount' => HTML::sanitize($response->transaction->amount)
+                'refund_amount' => HTML::sanitize($response->transaction->amount)
             ]), 'success');
         } else {
             $this->ms->add($this->app->getDef('ms_error_doRefund'), 'error');

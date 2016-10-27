@@ -6,6 +6,6 @@ button_app_legacy = Manage App
 token_new_card = -- New Card --
 save_new_card = Save card for future purchases?
 
-error_php_extensions = This App requires the following PHP extensions and will and will not load until PHP has been updated:<br /><br />:extensions
-error_merchant_account_currency = This App will not load until a merchant account has been defined for the :currency currency.
+error_php_extensions = This App requires the following PHP extensions and will and will not load until PHP has been updated:<br /><br />{{extensions}}
+error_merchant_account_currency = This App will not load until a merchant account has been defined for the {{currency}} currency.
 error_credentials = This App will not load until the Merchant ID, Public Key, and Private Key parameters have been configured.
