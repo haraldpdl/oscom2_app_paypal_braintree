@@ -112,18 +112,20 @@
     }
 
     function checkout_initialization_method() {
-      global $currency, $cart, $appBraintreeCcFormHash;
+      global $cart, $appBraintreeCcFormHash;
 
       $content = '';
 
       if ($this->isPaymentTypeAccepted('paypal')) {
         $this->_app->setupCredentials();
 
+        $transaction_currency = $this->getTransactionCurrency();
+
         $clientToken = Braintree_ClientToken::generate(array(
-          'merchantAccountId' => $this->getMerchantAccountId($currency)
+          'merchantAccountId' => $this->getMerchantAccountId($transaction_currency)
         ));
 
-        $amount = $this->_app->formatCurrencyRaw($cart->show_total(), $currency);
+        $amount = $this->_app->formatCurrencyRaw($cart->show_total(), $transaction_currency);
 
         $formUrl = tep_href_link('ext/modules/payment/braintree_cc/rpc.php', 'action=paypal', 'SSL');
         $formHash = $appBraintreeCcFormHash = $this->_app->createRandomValue(16);
@@ -213,7 +215,7 @@ $(function() {
         paypalInstance.tokenize({
           flow: 'checkout',
           amount: {$amount},
-          currency: '{$currency}',
+          currency: '{$transaction_currency}',
           enableShippingAddress: {$enableShippingAddress},
           enableBillingAddress: true,
           intent: '{$intent}'
@@ -392,11 +394,13 @@ EOD;
       } else {
         $this->_app->setupCredentials();
 
+        $transaction_currency = $this->getTransactionCurrency();
+
         $clientToken = Braintree_ClientToken::generate(array(
-          'merchantAccountId' => $this->getMerchantAccountId($currency)
+          'merchantAccountId' => $this->getMerchantAccountId($transaction_currency)
         ));
 
-        $amount = $this->_app->formatCurrencyRaw($order->info['total'], $currency);
+        $amount = $this->_app->formatCurrencyRaw($order->info['total'], $transaction_currency);
 
         $content = <<<EOD
 <script>
@@ -412,7 +416,7 @@ $(function() {
     paypal: {
       singleUse: true,
       amount: {$amount},
-      currency: '{$currency}'
+      currency: '{$transaction_currency}'
     }
   });
 });
@@ -466,19 +470,19 @@ EOD;
 
       $this->_app->setupCredentials();
 
-      $currency = $this->getTransactionCurrency();
+      $transaction_currency = $this->getTransactionCurrency();
 
       if (tep_session_is_registered('appBraintreeCcNonce')) {
         $data = array(
-          'amount' => $this->_app->formatCurrencyRaw($order->info['total'], $currency),
+          'amount' => $this->_app->formatCurrencyRaw($order->info['total'], $transaction_currency),
           'paymentMethodNonce' => $appBraintreeCcNonce,
-          'merchantAccountId' => $this->getMerchantAccountId($currency)
+          'merchantAccountId' => $this->getMerchantAccountId($transaction_currency)
         );
       } else {
         $data = array(
           'paymentMethodNonce' => $HTTP_POST_VARS['payment_method_nonce'],
-          'amount' => $this->_app->formatCurrencyRaw($order->info['total'], $currency),
-          'merchantAccountId' => $this->getMerchantAccountId($currency),
+          'amount' => $this->_app->formatCurrencyRaw($order->info['total'], $transaction_currency),
+          'merchantAccountId' => $this->getMerchantAccountId($transaction_currency),
           'customer' => array(
             'firstName' => $order->customer['firstname'],
             'lastName' => $order->customer['lastname'],
@@ -730,15 +734,17 @@ EOD;
     }
 
     function getSubmitCardDetailsJavascript() {
-      global $order, $currency, $request_type;
+      global $order, $request_type;
 
       $this->_app->setupCredentials();
 
+      $transaction_currency = $this->getTransactionCurrency();
+
       $clientToken = Braintree_ClientToken::generate(array(
-        'merchantAccountId' => $this->getMerchantAccountId($currency)
+        'merchantAccountId' => $this->getMerchantAccountId($transaction_currency)
       ));
 
-      $order_total = $this->_app->formatCurrencyRaw($order->info['total'], $currency);
+      $order_total = $this->_app->formatCurrencyRaw($order->info['total'], $transaction_currency);
 
       $getCardTokenRpcUrl = tep_href_link('ext/modules/payment/braintree_cc/rpc.php', 'action=getCardToken', 'SSL');
 
