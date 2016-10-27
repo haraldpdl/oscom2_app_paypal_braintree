@@ -8,6 +8,10 @@ module_cc_error_curl = This module requires a minimum PHP version of 5.4.0.
 module_cc_error_credentials = This module will not load until the merchant credentials have been configured. Please edit and configure the Credentials settings of the Braintree App.
 module_cc_error_merchant_accounts_currency = This module will not load until the merchant account for the default currency has been configured. Please edit and configure the Credentials settings of the Braintree App.
 
+module_cc_error_title = A problem occurred.
+module_cc_error_general = A general problem occurred processing the card. Please try again and if problems persist, please contact us or try another payment method.
+module_cc_error_unavailable = Card payments can not be processed at this time. Please contact us or try another payment method.
+
 module_dp_field_card_type = Card Type:
 module_dp_field_card_owner = Card Owner Name:
 module_dp_field_card_number = Card Number:
