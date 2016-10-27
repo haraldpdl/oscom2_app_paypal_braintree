@@ -261,7 +261,13 @@ EOD;
         }
 
         if (!$this->isValidCurrency($currency)) {
-          $content .= sprintf(MODULE_PAYMENT_BRAINTREE_CC_CURRENCY_CHARGE, $currencies->format($order->info['total'], true, DEFAULT_CURRENCY), DEFAULT_CURRENCY, $currency);
+          $content .= '<div class="ui-state-highlight ui-corner-all" style="padding: 10px; margin-bottom: 10px;">' .
+                      $this->_app->getDef('module_cc_notice_currency_charge', array(
+                        'currency_total' => $currencies->format($order->info['total'], true, DEFAULT_CURRENCY),
+                        'currency' => DEFAULT_CURRENCY,
+                        'current_currency' => $currency
+                      )) .
+                      '</div>';
         }
 
         $default_token = null;
@@ -276,23 +282,28 @@ EOD;
 
               $t[] = array(
                 'id' => (int)$tokens['id'],
-                'text' => $tokens['card_type'] . ' ending in ' . $tokens['number_filtered'] . ' (expiry date ' . substr($tokens['expiry_date'], 0, 2) . '/' . substr($tokens['expiry_date'], 2) . ')'
+                'text' => $this->_app->getDef('module_cc_stored_card_selection_title', array(
+                  'card_type' => $tokens['card_type'],
+                  'card_number' => $tokens['number_filtered'],
+                  'card_expiry_date_month' => substr($tokens['expiry_date'], 0, 2),
+                  'card_expiry_date_year' => substr($tokens['expiry_date'], 2)
+                ))
               );
             }
 
             $t[] = array(
               'id' => '0',
-              'text' => $this->_app->getDef('token_new_card')
+              'text' => $this->_app->getDef('module_cc_new_card')
             );
 
             $content .= '<div style="margin-bottom: 10px;">
-                           <label class="hosted-fields--label" for="braintree_cards">Payment Cards</label>' .
+                           <label class="hosted-fields--label" for="braintree_cards">' . $this->_app->getDef('module_cc_payment_cards_title') . '</label>' .
                            tep_draw_pull_down_menu('braintree_cards', $t, $default_token, 'id="braintree_cards" class="hosted-field"') . '
                          </div>';
 
             if (OSCOM_APP_PAYPAL_BRAINTREE_CC_VERIFY_CVV == '1') {
               $content .= '<div id="braintree_stored_card_cvv">
-                             <label class="hosted-fields--label" for="card-token-cvv">Security Code <span class="ui-icon ui-icon-info" style="float: right;" title="The Security Code is a 3 or 4 digit code commonly found on the back of the payment card where the card is signed." id="btCvvTokenInfoIcon"></span></label>
+                             <label class="hosted-fields--label" for="card-token-cvv">' . $this->_app->getDef('module_cc_card_cvv') . ' <span class="ui-icon ui-icon-info" style="float: right;" title="' . addslashes($this->_app->getDef('module_cc_card_cvv_info')) . '" id="btCvvTokenInfoIcon"></span></label>
                              <div id="card-token-cvv" class="hosted-field"></div>
                            </div>';
             }
@@ -302,20 +313,20 @@ EOD;
         }
 
         $content .= '<div id="braintree_new_card">
-                       <label class="hosted-fields--label" for="card-number">Card Number</label>
+                       <label class="hosted-fields--label" for="card-number">' . $this->_app->getDef('module_cc_card_number') . '</label>
                        <div id="card-number" class="hosted-field"></div>
 
-                       <label class="hosted-fields--label" for="card-exp">Expiration Date</label>
+                       <label class="hosted-fields--label" for="card-exp">' . $this->_app->getDef('module_cc_card_expiration_date') . '</label>
                        <div id="card-exp" class="hosted-field"></div>';
 
         if ((OSCOM_APP_PAYPAL_BRAINTREE_CC_VERIFY_CVV == '1') || (OSCOM_APP_PAYPAL_BRAINTREE_CC_VERIFY_CVV == '2')) {
-          $content .= '<label class="hosted-fields--label" for="card-cvv">Security Code <span class="ui-icon ui-icon-info" style="float: right;" title="The Security Code is a 3 or 4 digit code commonly found on the back of the payment card where the card is signed." id="btCvvInfoIcon"></span></label>
+          $content .= '<label class="hosted-fields--label" for="card-cvv">' . $this->_app->getDef('module_cc_card_cvv') . ' <span class="ui-icon ui-icon-info" style="float: right;" title="' . addslashes($this->_app->getDef('module_cc_card_cvv_info')) . '" id="btCvvInfoIcon"></span></label>
                        <div id="card-cvv" class="hosted-field"></div>';
         }
 
         if (OSCOM_APP_PAYPAL_BRAINTREE_CC_CC_TOKENS == '1') {
           $content .= '<div>
-                         <label>' . tep_draw_checkbox_field('cc_save', 'true', true) . ' ' . $this->_app->getDef('save_new_card') . '</label>
+                         <label>' . tep_draw_checkbox_field('cc_save', 'true', true) . ' ' . $this->_app->getDef('module_cc_save_new_card') . '</label>
                        </div>';
         }
 
