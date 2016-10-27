@@ -575,7 +575,7 @@ EOD;
         'Transaction ID: ' . tep_db_prepare_input($braintree_result->transaction->id)
       );
 
-      if ((OSCOM_APP_PAYPAL_BRAINTREE_CC_THREE_D_SECURE === '1') || ((OSCOM_APP_PAYPAL_BRAINTREE_CC_THREE_D_SECURE === '2') && !isset($braintree_token))) {
+      if (($braintree_result->transaction->paymentInstrumentType == 'credit_card') && ((OSCOM_APP_PAYPAL_BRAINTREE_CC_THREE_D_SECURE === '1') || ((OSCOM_APP_PAYPAL_BRAINTREE_CC_THREE_D_SECURE === '2') && !isset($braintree_token)))) {
         if (isset($braintree_result->transaction->threeDSecureInfo) && is_object($braintree_result->transaction->threeDSecureInfo)) {
           $status_comment[] = '3D Secure: ' . tep_db_prepare_input($braintree_result->transaction->threeDSecureInfo->status . ' (Liability Shifted: ' . ($braintree_result->transaction->threeDSecureInfo->liabilityShifted === true ? 'true' : 'false') . ')');
         } else {
