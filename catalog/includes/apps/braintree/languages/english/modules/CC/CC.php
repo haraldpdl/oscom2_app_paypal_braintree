@@ -22,5 +22,12 @@ module_cc_error_merchant_accounts_currency = This module will not load until the
 module_cc_notice_currency_charge = The currency currently used to display prices is in :current_currency. Your credit card will be charged a total of <span style="white-space: nowrap;">:currency_total :currency</span> for this purchase.
 
 module_cc_error_title = A problem occurred.
-module_cc_error_general = A general problem occurred processing the card. Please try again and if problems persist, please contact us or try another payment method.
+module_cc_error_general = There was a problem processing the card. Please try again and if problems persist, please contact us or try another payment card or method.
 module_cc_error_unavailable = Card payments can not be processed at this time. Please contact us or try another payment method.
+module_cc_error_cvv = There was a problem processing the Security Code of the card. Please verify the Security Code and try again.
+module_cc_error_avs = There was a problem processing the card with the billing address. Please verify the billing address and try again.
+module_cc_error_avs_and_cvv = There was a problem processing the card with the billing address and Security Code. Please verify the billing address and the Security Code of the card and try again.
+
+module_cc_error_all_fields_required = Please fill out the payment information fields to purchase this order.
+module_cc_error_fields_required = Please fill out the payment information fields to purchase this order.
+module_cc_error_tmp_processing_problem = The card could not be processed at this time. Please try again and if problems persist, contact us or try with another card.

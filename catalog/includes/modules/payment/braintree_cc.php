@@ -543,21 +543,21 @@ EOD;
         return true;
       }
 
-      $message = 'There was a problem processing the payment card. Please verify the card information and try again.';
+      $message = $this->_app->getDef('module_cc_error_general');
 
       if (isset($braintree_result->transaction)) {
         if (isset($braintree_result->transaction->gatewayRejectionReason)) {
           switch ($braintree_result->transaction->gatewayRejectionReason) {
             case 'cvv':
-              $message = 'There was a problem processing the Security Code of the card. Please verify the Security Code and try again.';
+              $message = $this->_app->getDef('module_cc_error_cvv');
               break;
 
             case 'avs':
-              $message = 'There was a problem processing the card with the billing address. Please verify the billing address and try again.';
+              $message = $this->_app->getDef('module_cc_error_avs');
               break;
 
             case 'avs_and_cvv':
-              $message = 'There was a problem processing the card with the billing address and Security Code. Please verify the billing address and the Security Code of the card and try again.';
+              $message = $this->_app->getDef('module_cc_error_avs_and_cvv');
               break;
           }
         }
@@ -759,6 +759,9 @@ EOD;
       $url_not_available = addslashes(str_replace('&amp;', '&', tep_href_link('checkout_payment.php', 'payment_error=braintree_cc&error=not_available', 'SSL')));
 
       $error_unavailable = addslashes($this->_app->getDef('module_cc_error_unavailable'));
+      $error_all_fields_required = addslashes($this->_app->getDef('module_cc_error_all_fields_required'));
+      $error_fields_required = addslashes($this->_app->getDef('module_cc_error_fields_required'));
+      $error_tmp_processing_problem = addslashes($this->_app->getDef('module_cc_error_tmp_processing_problem'));
 
       $js = <<<EOD
 <style>
@@ -821,7 +824,7 @@ $(function() {
       if (tokenizeErr) {
         switch (tokenizeErr.code) {
           case 'HOSTED_FIELDS_FIELDS_EMPTY':
-            $('#btCardStatus').html('Please fill out the payment information fields to purchase this order.');
+            $('#btCardStatus').html('{$error_all_fields_required}');
 
             if ($('#btCardStatus').is(':hidden')) {
               $('#btCardStatus').show();
@@ -841,7 +844,7 @@ $(function() {
             break;
 
           case 'HOSTED_FIELDS_FIELDS_INVALID':
-            $('#btCardStatus').html('Please fill out the payment information fields to purchase this order.');
+            $('#btCardStatus').html('{$error_fields_required}');
 
             if ($('#btCardStatus').is(':hidden')) {
               $('#btCardStatus').show();
@@ -870,7 +873,7 @@ $(function() {
             break;
 
           default:
-            $('#btCardStatus').html('The card could not be processed at this time. Please try again and if problems persist, contact us or try with another card.');
+            $('#btCardStatus').html('{$error_tmp_processing_problem}');
 
             if ($('#btCardStatus').is(':hidden')) {
               $('#btCardStatus').show();
@@ -902,7 +905,7 @@ $(function() {
         client: clientInstance
       }, function (threeDSecureErr, threeDSecureInstance) {
         if (threeDSecureErr) {
-          $('#btCardStatus').html('The card could not be processed at this time. Please try again and if problems persist, contact us or try with another card.');
+          $('#btCardStatus').html('{$error_tmp_processing_problem}');
 
           if ($('#btCardStatus').is(':hidden')) {
             $('#btCardStatus').show();
@@ -931,7 +934,7 @@ $(function() {
           }
         }, function (error, response) {
           if (error) {
-            $('#btCardStatus').html('The card could not be processed at this time. Please try again and if problems persist, contact us or try with another card.');
+            $('#btCardStatus').html('{$error_tmp_processing_problem}');
 
             if ($('#btCardStatus').is(':hidden')) {
               $('#btCardStatus').show();
@@ -948,7 +951,7 @@ $(function() {
         });
       });
     } catch (err) {
-      $('#btCardStatus').html('The card could not be processed at this time. Please try again and if problems persist, contact us or try with another card.');
+      $('#btCardStatus').html('{$error_tmp_processing_problem}');
 
       if ($('#btCardStatus').is(':hidden')) {
         $('#btCardStatus').show();
