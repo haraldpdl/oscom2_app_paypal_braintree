@@ -133,6 +133,44 @@
 
         $enableShippingAddress = in_array($cart->get_content_type(), array('physical', 'mixed')) ? 'true' : 'false';
 
+        switch (OSCOM_APP_PAYPAL_BRAINTREE_CC_PAYPAL_BUTTON_COLOR) {
+          case '2':
+            $button_color = 'blue';
+            break;
+
+          case '3':
+            $button_color = 'silver';
+            break;
+
+          case '1':
+          default:
+            $button_color = 'gold';
+        }
+
+        switch (OSCOM_APP_PAYPAL_BRAINTREE_CC_PAYPAL_BUTTON_SIZE) {
+          case '2':
+            $button_size = 'small';
+            break;
+
+          case '3':
+            $button_size = 'medium';
+            break;
+
+          case '1':
+          default:
+            $button_size = 'tiny';
+        }
+
+        switch (OSCOM_APP_PAYPAL_BRAINTREE_CC_PAYPAL_BUTTON_SHAPE) {
+          case '2':
+            $button_shape = 'rect';
+            break;
+
+          case '1':
+          default:
+            $button_shape = 'pill';
+        }
+
         $content = <<<EOD
 <script>
 if ( typeof jQuery == 'undefined' ) {
@@ -143,9 +181,9 @@ if ( typeof jQuery == 'undefined' ) {
   data-merchant="braintree"
   data-id="paypal-button"
   data-button="checkout"
-  data-color="blue"
-  data-size="medium"
-  data-shape="pill"
+  data-color="{$button_color}"
+  data-size="{$button_size}"
+  data-shape="{$button_shape}"
   data-button_type="submit"
   data-button_disabled="false"
 ></script>
