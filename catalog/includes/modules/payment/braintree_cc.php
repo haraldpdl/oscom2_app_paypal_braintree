@@ -181,7 +181,7 @@ if ( typeof jQuery == 'undefined' ) {
 </script>
 <script src="https://www.paypalobjects.com/api/button.js?"
   data-merchant="braintree"
-  data-id="paypal-button"
+  data-id="bt-paypal-button"
   data-button="checkout"
   data-color="{$button_color}"
   data-size="{$button_size}"
@@ -191,12 +191,12 @@ if ( typeof jQuery == 'undefined' ) {
 ></script>
 <script>
 $(function() {
-  var paypalButton = document.querySelector('.paypal-button');
-
   braintree.client.create({
     authorization: '{$clientToken}'
   }, function (clientErr, clientInstance) {
     if (clientErr) {
+      $('#bt-paypal-button').hide();
+
       return;
     }
 
@@ -204,12 +204,14 @@ $(function() {
       client: clientInstance
     }, function (paypalErr, paypalInstance) {
       if (paypalErr) {
+        $('#bt-paypal-button').hide();
+
         return;
       }
 
-      paypalButton.removeAttribute('disabled');
+      $('#bt-paypal-button').prop('disabled', false);
 
-      paypalButton.addEventListener('click', function (event) {
+      $('#bt-paypal-button').on('click', function (event) {
         event.preventDefault();
 
         paypalInstance.tokenize({
@@ -224,7 +226,7 @@ $(function() {
             return;
           }
 
-          paypalButton.setAttribute('disabled', true);
+          $('#bt-paypal-button').prop('disabled', true);
 
           $('<form>').attr({
             name: 'bt_checkout_paypal',
@@ -246,7 +248,7 @@ $(function() {
 
           $('form[name="bt_checkout_paypal"]').submit();
         });
-      }, false);
+      });
     });
   });
 });
