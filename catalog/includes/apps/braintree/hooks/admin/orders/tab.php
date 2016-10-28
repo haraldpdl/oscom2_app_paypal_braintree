@@ -278,7 +278,7 @@ EOD;
     <p>
       <label for="btRefundAmount"><strong>{$field_amount_title}</strong></label>
       <input type="text" name="btRefundAmount" value="{$refund_total}" id="btRefundAmount" style="text-align: right;" />
-      {$capture_currency}
+      {$refund_currency}
     </p>
   </form>
 </div>

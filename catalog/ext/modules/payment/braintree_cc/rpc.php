@@ -134,8 +134,8 @@ switch ($HTTP_GET_VARS['action']) {
               $email_text = sprintf(EMAIL_GREET_NONE, $customers_firstname) .
                 EMAIL_WELCOME .
                 $pm->_app->getDef('module_cc_email_account_password', [
-                  ':email_address' => $email_address,
-                  ':password' => $customer_password
+                  'email_address' => $email_address,
+                  'password' => $customer_password
                 ]) . "\n\n" .
                 EMAIL_TEXT .
                 EMAIL_CONTACT .

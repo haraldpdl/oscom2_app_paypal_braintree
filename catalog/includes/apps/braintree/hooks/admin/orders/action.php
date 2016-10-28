@@ -281,10 +281,12 @@
         tep_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
 
         $messageStack->add_session($this->_app->getDef('ms_success_doRefund', array(
-          ':refund_amount' => tep_db_prepare_input($response->transaction->amount)
+          'refund_amount' => tep_db_prepare_input($response->transaction->amount)
         )), 'success');
       } else {
-        $messageStack->add_session($this->_app->getDef('ms_error_doRefund'), 'error');
+        $messageStack->add_session($this->_app->getDef('ms_error_doRefund', array(
+          'refund_amount' => tep_db_prepare_input($response->transaction->amount)
+        )), 'error');
       }
     }
   }
