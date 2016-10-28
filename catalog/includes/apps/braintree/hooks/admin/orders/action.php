@@ -95,10 +95,24 @@
       }
 
       if (($error === false) && is_object($response) && (get_class($response) == 'Braintree\\Transaction') && isset($response->id) && ($response->id == $comments['Transaction ID'])) {
-        $result = 'Transaction ID: ' . tep_db_prepare_input($response->id) . "\n" .
-                  'Payment Status: ' . tep_db_prepare_input($response->status) . "\n" .
-                  'Payment Type: ' . tep_db_prepare_input($response->paymentInstrumentType) . "\n" .
-                  'Status History:';
+        $result = 'Transaction ID: ' . tep_db_prepare_input($response->id) . "\n";
+
+        if (($response->paymentInstrumentType == 'credit_card') && isset($comments['3D Secure'])) {
+          if (isset($response->threeDSecureInfo) && is_object($response->threeDSecureInfo)) {
+            $result .= '3D Secure: ' . tep_db_prepare_input($response->threeDSecureInfo->status . ' (Liability Shifted: ' . ($response->threeDSecureInfo->liabilityShifted === true ? 'true' : 'false') . ')') . "\n";
+          } else {
+            $result .= '3D Secure: ** MISSING **';
+          }
+        }
+
+        $result .= 'Payment Status: ' . tep_db_prepare_input($response->status) . "\n" .
+                   'Payment Type: ' . tep_db_prepare_input($response->paymentInstrumentType) . "\n";
+
+        if ($this->server === 0) {
+          $result .= 'Server: sandbox' . "\n";
+        }
+
+        $result .= 'Status History:';
 
         foreach ($response->statusHistory as $sh) {
           $sh->timestamp->setTimezone(new DateTimeZone(date_default_timezone_get()));
