@@ -557,7 +557,7 @@ EOD;
             ];
         }
 
-        $data['channel'] = 'OSCOM_' . OSCOM::getVersion() . '-' . $this->app->getVersion() . '-' . \Braintree\Version::get();
+        $data['channel'] = $this->app->getIdentifier();
 
         $error = false;
 

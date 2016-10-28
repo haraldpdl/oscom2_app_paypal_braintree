@@ -12,6 +12,8 @@ use OSC\OM\OSCOM;
 
 class Braintree extends \OSC\OM\AppAbstract
 {
+    protected $identifier = 'osCommerce_BTapp_v1';
+
     protected function init()
     {
         if (!class_exists('\Braintree', false)) {
@@ -110,5 +112,10 @@ EOD;
         }
 
         return number_format(tep_round($total * $currency_value, $currencies->currencies[$currency_code]['decimal_places']), $currencies->currencies[$currency_code]['decimal_places'], '.', '');
+    }
+
+    public function getIdentifier()
+    {
+        return $this->identifier;
     }
 }
