@@ -255,7 +255,7 @@ EOD;
 
           while ($r = tep_db_fetch_array($r_query)) {
             if (preg_match('/^Braintree App\: Refund \(([0-9\.]+)\)\n/', $r['comments'], $r_matches)) {
-              $refund_total -= $this->_app->formatCurrencyRaw($r_matches[1], $order['currency'], 1);
+              $refund_total = $this->_app->formatCurrencyRaw($refund_total - $r_matches[1], $order['currency'], 1);
             }
           }
 
