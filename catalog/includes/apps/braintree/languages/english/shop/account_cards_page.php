@@ -1,6 +1,8 @@
 account_braintree_cards_title = Braintree Cards Management Page
 account_braintree_cards_description = Adds a Braintree Cards management page to the My Account area
 
+accouint_braintree_cards_legacy_admin_app_button = Manage App
+
 account_braintree_cards_error_main_module = This module will not load until the Braintree payment module has been installed, configured, and is enabled. Please install and configure the Braintree payment module.
 
 account_braintree_cards_link_title = Manage saved payment cards.
