@@ -229,7 +229,7 @@ class BT implements \OSC\OM\Modules\PaymentInterface {
             $content = <<<EOD
 <script src="https://www.paypalobjects.com/api/button.js?"
   data-merchant="braintree"
-  data-id="paypal-button"
+  data-id="bt-paypal-button"
   data-button="checkout"
   data-color="{$button_color}"
   data-size="{$button_size}"
@@ -239,12 +239,12 @@ class BT implements \OSC\OM\Modules\PaymentInterface {
 ></script>
 <script>
 $(function() {
-  var paypalButton = document.querySelector('.paypal-button');
-
   braintree.client.create({
     authorization: '{$clientToken}'
   }, function (clientErr, clientInstance) {
     if (clientErr) {
+      $('#bt-paypal-button').hide();
+
       return;
     }
 
@@ -252,12 +252,14 @@ $(function() {
       client: clientInstance
     }, function (paypalErr, paypalInstance) {
       if (paypalErr) {
+        $('#bt-paypal-button').hide();
+
         return;
       }
 
-      paypalButton.removeAttribute('disabled');
+      $('#bt-paypal-button').prop('disabled', false);
 
-      paypalButton.addEventListener('click', function (event) {
+      $('#bt-paypal-button').on('click', function (event) {
         event.preventDefault();
 
         paypalInstance.tokenize({
@@ -272,7 +274,7 @@ $(function() {
             return;
           }
 
-          paypalButton.setAttribute('disabled', true);
+          $('#bt-paypal-button').prop('disabled', true);
 
           $('<form>').attr({
             name: 'bt_checkout_paypal',
@@ -294,7 +296,7 @@ $(function() {
 
           $('form[name="bt_checkout_paypal"]').submit();
         });
-      }, false);
+      });
     });
   });
 });
@@ -359,11 +361,15 @@ EOD;
         }
 
         if (OSCOM_APP_PAYPAL_BT_ENTRY_FORM === '3') {
-            $content = '<h2>Card Payment</h2>
+            $content = '<h2>' . $this->app->getDef('card_payment_title') . '</h2>
                         <div id="btCardStatus" class="alert alert-danger hidden"></div>';
 
             if (!$this->isValidCurrency($_SESSION['currency'])) {
-                $content .= sprintf(MODULE_PAYMENT_BRAINTREE_CC_CURRENCY_CHARGE, $currencies->format($order->info['total'], true, DEFAULT_CURRENCY), DEFAULT_CURRENCY, $_SESSION['currency']);
+                $content .= '<div class="alert alert-warning">' . $this->app->getDef('card_currency_charge', [
+                  'currency_total' => $currencies->format($order->info['total'], true, DEFAULT_CURRENCY),
+                  'currency' => DEFAULT_CURRENCY,
+                  'current_currency' => $_SESSION['currency']
+                ]) . '</div>';
             }
 
             $default_token = null;
@@ -386,7 +392,12 @@ EOD;
 
                         $tokens[] = [
                             'id' => $Qtokens->valueInt('id'),
-                            'text' => $Qtokens->value('card_type') . ' ending in ' . $Qtokens->value('number_filtered') . ' (expiry date ' . substr($Qtokens->value('expiry_date'), 0, 2) . '/' . substr($Qtokens->value('expiry_date'), 2) . ')'
+                            'text' => $this->app->getDef('stored_card_selection_title', [
+                                'card_type' => $Qtokens->value('card_type'),
+                                'card_number' => $Qtokens->value('number_filtered'),
+                                'card_expiry_date_month' => substr($Qtokens->value('expiry_date'), 0, 2),
+                                'card_expiry_date_year' => substr($Qtokens->value('expiry_date'), 2)
+                            ])
                         ];
                     } while ($Qtokens->fetch());
 
@@ -474,13 +485,15 @@ if ($('#braintree_cards').length > 0) {
 EOD;
 
             if ((OSCOM_APP_PAYPAL_BT_VERIFY_CVV == '1') || (OSCOM_APP_PAYPAL_BT_VERIFY_CVV == '2')) {
+                $cvv_help = addslashes($this->app->getDef('card_cvv_help'));
+
                 $content .= <<<EOD
 <script>
 $(function() {
   $('.cardSecurityCodeInfo').popover({
     container: 'body',
     trigger: 'hover',
-    content: 'The Security Code is a 3 or 4 digit code commonly found on the back of the payment card where the card is signed.'
+    content: '{$cvv_help}'
   });
 });
 </script>
@@ -631,21 +644,21 @@ EOD;
             return true;
         }
 
-        $message = 'There was a problem processing the payment card. Please verify the card information and try again.';
+        $message = $this->app->getDef('card_error_general');
 
         if (isset($braintree_result->transaction)) {
             if (isset($braintree_result->transaction->gatewayRejectionReason)) {
                 switch ($braintree_result->transaction->gatewayRejectionReason) {
                     case 'cvv':
-                        $message = 'There was a problem processing the Security Code of the card. Please verify the Security Code and try again.';
+                        $message = $this->app->getDef('card_error_cvv');
                         break;
 
                     case 'avs':
-                        $message = 'There was a problem processing the card with the billing address. Please verify the billing address and try again.';
+                        $message = $this->app->getDef('card_error_avs');
                         break;
 
                     case 'avs_and_cvv':
-                        $message = 'There was a problem processing the card with the billing address and Security Code. Please verify the billing address and the Security Code of the card and try again.';
+                        $message = $this->app->getDef('card_error_avs_and_cvv');
                         break;
                 }
             }
@@ -723,8 +736,22 @@ EOD;
         }
     }
 
-    function get_error() {
-      return false;
+    public function get_error()
+    {
+        $error_message = $this->app->getDef('card_error_general');
+
+        switch ($_GET['error']) {
+            case 'not_available':
+                $error_message = $this->app->getDef('card_error_unavailable');
+                break;
+        }
+
+        $error = [
+          'title' => $this->app->getDef('card_error_title'),
+          'error' => $error_message
+        ];
+
+        return $error;
     }
 
     public function check()
@@ -819,13 +846,24 @@ EOD;
 
         $getCardTokenRpcUrl = OSCOM::link('index.php', 'order&callback&paypal&bt&getCardToken');
 
-        if (OSCOM_APP_PAYPAL_BT_THREE_D_SECURE === '1') {
+        if ((OSCOM_APP_PAYPAL_BT_THREE_D_SECURE === '1') && (HTTP::getRequestType() == 'SSL')) {
             $has3ds = 'all';
-        } elseif (OSCOM_APP_PAYPAL_BT_THREE_D_SECURE === '2') {
+        } elseif ((OSCOM_APP_PAYPAL_BT_THREE_D_SECURE === '2') && (HTTP::getRequestType() == 'SSL')) {
             $has3ds = 'new';
         } else {
             $has3ds = 'none';
         }
+
+        $url_not_available = addslashes(OSCOM::link('checkout_payment.php', 'payment_error=' . $this->app->vendor . '\\' . $this->app->code . '\\' . $this->code . '&error=not_available'));
+
+        $error_unavailable = addslashes($this->app->getDef('card_error_unavailable'));
+        $error_all_fields_required = addslashes($this->app->getDef('card_error_all_fields_required'));
+        $error_fields_required = addslashes($this->app->getDef('card_error_fields_required'));
+        $error_tmp_processing_problem = addslashes($this->app->getDef('card_error_tmp_processing_problem'));
+
+        $card_number = addslashes($this->app->getDef('card_number'));
+        $card_expiry_date = addslashes($this->app->getDef('card_expiration_date'));
+        $card_cvv = addslashes($this->app->getDef('card_cvv'));
 
         $js_scripts = '<script src="https://js.braintreegateway.com/web/3.2.0/js/client.min.js"></script>' .
                       '<script src="https://js.braintreegateway.com/web/3.2.0/js/hosted-fields.min.js"></script>';
@@ -839,12 +877,9 @@ EOD;
         $js = <<<EOD
 <script>
 $('form[name="checkout_confirmation"]').attr('id', 'braintree-payment-form');
-$('#braintree-payment-form button[type="submit"]').prop('disabled', true);
+$('#braintree-payment-form button[data-button="payNow"]').prop('disabled', true);
 
 $(function() {
-  var form = document.querySelector('#braintree-payment-form');
-  var submit = document.querySelector('#braintree-payment-form button[type="submit"]');
-
   var has3ds = '{$has3ds}';
   var do3ds = false;
 
@@ -853,9 +888,9 @@ $(function() {
       if (do3ds === true) {
         create3DS(clientInstance, nonce);
       } else {
-        document.querySelector('input[name="payment_method_nonce"]').value = nonce;
+        $('#braintree-payment-form input[name="payment_method_nonce"]').val(nonce);
 
-        form.submit();
+        $('#braintree-payment-form').submit();
       }
 
       return;
@@ -865,7 +900,7 @@ $(function() {
       if (tokenizeErr) {
         switch (tokenizeErr.code) {
           case 'HOSTED_FIELDS_FIELDS_EMPTY':
-            $('#btCardStatus').html('Please fill out the payment information fields to purchase this order.');
+            $('#btCardStatus').html('{$error_all_fields_required}');
 
             if ($('#btCardStatus').hasClass('hidden')) {
               $('#btCardStatus').removeClass('hidden');
@@ -885,7 +920,7 @@ $(function() {
             break;
 
           case 'HOSTED_FIELDS_FIELDS_INVALID':
-            $('#btCardStatus').html('Please fill out the payment information fields to purchase this order.');
+            $('#btCardStatus').html('{$error_fields_required}');
 
             if ($('#btCardStatus').hasClass('hidden')) {
               $('#btCardStatus').removeClass('hidden');
@@ -914,7 +949,7 @@ $(function() {
             break;
 
           default:
-            $('#btCardStatus').html('The card could not be processed at this time. Please try again and if problems persist, contact us or try with another card.');
+            $('#btCardStatus').html('{$error_tmp_processing_problem}');
 
             if ($('#btCardStatus').hasClass('hidden')) {
               $('#btCardStatus').removeClass('hidden');
@@ -933,42 +968,68 @@ $(function() {
       if (do3ds === true) {
         create3DS(clientInstance, nonce);
       } else {
-        document.querySelector('input[name="payment_method_nonce"]').value = nonce;
+        $('#braintree-payment-form input[name="payment_method_nonce"]').val(nonce);
 
-        form.submit();
+        $('#braintree-payment-form').submit();
       }
     });
   }
 
   function create3DS(clientInstance, nonce) {
-    braintree.threeDSecure.create({
-      client: clientInstance
-    }, function (threeDSecureErr, threeDSecureInstance) {
-      if (threeDSecureErr) {
-        return;
-      }
+    try {
+      braintree.threeDSecure.create({
+        client: clientInstance
+      }, function (threeDSecureErr, threeDSecureInstance) {
+        if (threeDSecureErr) {
+          $('#btCardStatus').html('{$error_tmp_processing_problem}');
 
-      threeDSecureInstance.verifyCard({
-        amount: {$order_total},
-        nonce: nonce,
-        addFrame: function (err, iframe) {
-          $('#bt3dsmodal .modal-body').html(iframe);
-          $('#bt3dsmodal').modal();
-        },
-        removeFrame: function () {
-          $('#bt3dsmodal .modal-body').html('');
-          $('#bt3dsmodal').modal('hide');
-        }
-      }, function (error, response) {
-        if (error) {
+          if ($('#btCardStatus').hasClass('hidden')) {
+            $('#btCardStatus').removeClass('hidden');
+          }
+
+          $('#braintree-payment-form button[data-button="payNow"]').html($('#braintree-payment-form button[data-button="payNow"]').data('orig-button-text')).prop('disabled', false);
+
           return;
         }
 
-        document.querySelector('input[name="payment_method_nonce"]').value = response.nonce;
+        threeDSecureInstance.verifyCard({
+          amount: {$order_total},
+          nonce: nonce,
+          addFrame: function (err, iframe) {
+            $('#bt3dsmodal .modal-body').html(iframe);
+            $('#bt3dsmodal').modal();
+          },
+          removeFrame: function () {
+            $('#bt3dsmodal .modal-body').html('');
+            $('#bt3dsmodal').modal('hide');
+          }
+        }, function (error, response) {
+          if (error) {
+            $('#btCardStatus').html('{$error_tmp_processing_problem}');
 
-        form.submit();
+            if ($('#btCardStatus').hasClass('hidden')) {
+              $('#btCardStatus').removeClass('hidden');
+            }
+
+            $('#braintree-payment-form button[data-button="payNow"]').html($('#braintree-payment-form button[data-button="payNow"]').data('orig-button-text')).prop('disabled', false);
+
+            return;
+          }
+
+          $('#braintree-payment-form input[name="payment_method_nonce"]').val(response.nonce);
+
+          $('#braintree-payment-form').submit();
+        });
       });
-    });
+    } catch (err) {
+      $('#btCardStatus').html('{$error_tmp_processing_problem}');
+
+      if ($('#btCardStatus').hasClass('hidden')) {
+        $('#btCardStatus').removeClass('hidden');
+      }
+
+      $('#braintree-payment-form button[data-button="payNow"]').html($('#braintree-payment-form button[data-button="payNow"]').data('orig-button-text')).prop('disabled', false);
+    }
   }
 
   var btClientInstance;
@@ -976,7 +1037,7 @@ $(function() {
 
   if ($('#braintree_cards').length > 0) {
     $('#braintree_cards').change(function() {
-      $('#braintree-payment-form button[type="submit"]').prop('disabled', true);
+      $('#braintree-payment-form button[data-button="payNow"]').prop('disabled', true);
 
       var selected = $(this).val();
 
@@ -992,6 +1053,16 @@ $(function() {
     authorization: '{$clientToken}'
   }, function (clientErr, clientInstance) {
     if (clientErr) {
+      $('#btCardStatus').html('{$error_unavailable}');
+
+      if ($('#btCardStatus').hasClass('hidden')) {
+        $('#btCardStatus').removeClass('hidden');
+      }
+
+      $('#braintree-payment-form button[data-button="payNow"]').hide();
+
+      window.location = '{$url_not_available}';
+
       return;
     }
 
@@ -1004,7 +1075,11 @@ $(function() {
     }
   });
 
-  form.addEventListener('submit', function (event) {
+  $('#braintree-payment-form').on('submit', function (event) {
+    if ($('#braintree-payment-form input[name="payment_method_nonce"]').val().length > 0) {
+      return;
+    }
+
     event.preventDefault();
 
     var doTokenizeCall = true;
@@ -1056,7 +1131,7 @@ $(function() {
     if (doTokenizeCall === true) {
       doTokenize(btHostedFieldsInstance, btClientInstance);
     }
-  }, false);
+  });
 
   function braintreeShowNewCardFields() {
     if ($('#braintree_stored_card_cvv').length === 1) {
@@ -1138,18 +1213,18 @@ $(function() {
     var fields = {
       number: {
         selector: '#card-number',
-        placeholder: 'Card Number'
+        placeholder: '{$card_number}'
       },
       expirationDate: {
         selector: '#card-exp',
-        placeholder: 'Expiry Date MM / YYYY'
+        placeholder: '{$card_expiry_date}'
       }
     };
 
     if ($('#card-cvv').length === 1) {
       fields.cvv = {
         selector: '#card-cvv',
-        placeholder: 'Security Code'
+        placeholder: '{$card_cvv}'
       };
     }
 
@@ -1166,12 +1241,22 @@ $(function() {
       fields: fields
     }, function (hostedFieldsErr, hostedFieldsInstance) {
       if (hostedFieldsErr) {
+        $('#btCardStatus').html('{$error_unavailable}');
+
+        if ($('#btCardStatus').hasClass('hidden')) {
+          $('#btCardStatus').removeClass('hidden');
+        }
+
+        $('#braintree-payment-form button[data-button="payNow"]').hide();
+
+        window.location = '{$url_not_available}';
+
         return;
       }
 
       btHostedFieldsInstance = hostedFieldsInstance;
 
-      $('#braintree-payment-form button[type="submit"]').prop('disabled', false);
+      $('#braintree-payment-form button[data-button="payNow"]').prop('disabled', false);
     });
   }
 
@@ -1190,22 +1275,32 @@ $(function() {
         fields: {
           cvv: {
             selector: '#card-token-cvv',
-            placeholder: 'Security Code'
+            placeholder: '{$card_cvv}'
           }
         }
       }, function (hostedFieldsErr, hostedFieldsInstance) {
         if (hostedFieldsErr) {
+          $('#btCardStatus').html('{$error_unavailable}');
+
+          if ($('#btCardStatus').hasClass('hidden')) {
+            $('#btCardStatus').removeClass('hidden');
+          }
+
+          $('#braintree-payment-form button[data-button="payNow"]').hide();
+
+          window.location = '{$url_not_available}';
+
           return;
         }
 
         btHostedFieldsInstance = hostedFieldsInstance;
 
-        $('#braintree-payment-form button[type="submit"]').prop('disabled', false);
+        $('#braintree-payment-form button[data-button="payNow"]').prop('disabled', false);
       });
     } else {
       btHostedFieldsInstance = undefined;
 
-      $('#braintree-payment-form button[type="submit"]').prop('disabled', false);
+      $('#braintree-payment-form button[data-button="payNow"]').prop('disabled', false);
     }
   }
 });
