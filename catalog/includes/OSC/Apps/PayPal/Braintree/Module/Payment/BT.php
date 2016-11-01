@@ -170,12 +170,13 @@ class BT implements \OSC\OM\Modules\PaymentInterface {
         if ($this->isPaymentTypeAccepted('paypal')) {
             $this->app->setupCredentials();
 
+            $transaction_currency = $this->getTransactionCurrency();
+
             $clientToken = \Braintree\ClientToken::generate([
-                'merchantAccountId' => $this->getMerchantAccountId($_SESSION['currency'])
+                'merchantAccountId' => $this->getMerchantAccountId($transaction_currency)
             ]);
 
-            $amount = $this->app->formatCurrencyRaw($_SESSION['cart']->show_total(), $_SESSION['currency']);
-            $currency = $_SESSION['currency'];
+            $amount = $this->app->formatCurrencyRaw($_SESSION['cart']->show_total(), $transaction_currency);
 
             $formUrl = OSCOM::link('index.php', 'order&callback&paypal&bt');
             $formHash = $_SESSION['appPayPalBtFormHash'] = Hash::getRandomString(16);
@@ -223,7 +224,7 @@ $(function() {
         paypalInstance.tokenize({
           flow: 'checkout',
           amount: {$amount},
-          currency: '{$currency}',
+          currency: '{$transaction_currency}',
           enableShippingAddress: {$enableShippingAddress},
           enableBillingAddress: true,
           intent: '{$intent}'
@@ -430,12 +431,13 @@ EOD;
         } else {
             $this->app->setupCredentials();
 
+            $transaction_currency = $this->getTransactionCurrency();
+
             $clientToken = \Braintree\ClientToken::generate([
-                'merchantAccountId' => $this->getMerchantAccountId($_SESSION['currency'])
+                'merchantAccountId' => $this->getMerchantAccountId($transaction_currency)
             ]);
 
-            $amount = $this->app->formatCurrencyRaw($order->info['total'], $_SESSION['currency']);
-            $currency = $_SESSION['currency'];
+            $amount = $this->app->formatCurrencyRaw($order->info['total'], $transaction_currency);
 
             $oscTemplate->addBlock('<script src="https://js.braintreegateway.com/v2/braintree.js"></script>', 'footer_scripts');
 
@@ -447,7 +449,7 @@ $(function() {
     paypal: {
       singleUse: true,
       amount: {$amount},
-      currency: '{$currency}'
+      currency: '{$transaction_currency}'
     }
   });
 });
@@ -498,19 +500,19 @@ EOD;
 
         $this->app->setupCredentials();
 
-        $currency = $this->getTransactionCurrency();
+        $transaction_currency = $this->getTransactionCurrency();
 
         if (isset($_SESSION['appPayPalBtNonce'])) {
             $data = [
-                'amount' => $this->app->formatCurrencyRaw($order->info['total'], $currency),
+                'amount' => $this->app->formatCurrencyRaw($order->info['total'], $transaction_currency),
                 'paymentMethodNonce' => $_SESSION['appPayPalBtNonce'],
-                'merchantAccountId' => $this->getMerchantAccountId($currency)
+                'merchantAccountId' => $this->getMerchantAccountId($transaction_currency)
             ];
         } else {
             $data = [
                 'paymentMethodNonce' => $_POST['payment_method_nonce'],
-                'amount' => $this->app->formatCurrencyRaw($order->info['total'], $currency),
-                'merchantAccountId' => $this->getMerchantAccountId($currency),
+                'amount' => $this->app->formatCurrencyRaw($order->info['total'], $transaction_currency),
+                'merchantAccountId' => $this->getMerchantAccountId($transaction_currency),
                 'customer' => [
                     'firstName' => $order->customer['firstname'],
                     'lastName' => $order->customer['lastname'],
@@ -740,11 +742,13 @@ EOD;
 
         $this->app->setupCredentials();
 
+        $transaction_currency = $this->getTransactionCurrency();
+
         $clientToken = \Braintree\ClientToken::generate([
-            'merchantAccountId' => $this->getMerchantAccountId($_SESSION['currency'])
+            'merchantAccountId' => $this->getMerchantAccountId($transaction_currency)
         ]);
 
-        $order_total = $this->app->formatCurrencyRaw($order->info['total'], $_SESSION['currency']);
+        $order_total = $this->app->formatCurrencyRaw($order->info['total'], $transaction_currency);
 
         $getCardTokenRpcUrl = OSCOM::link('index.php', 'order&callback&paypal&bt&getCardToken');
 
