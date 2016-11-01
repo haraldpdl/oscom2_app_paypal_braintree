@@ -54,6 +54,10 @@ class BT implements \OSC\OM\Modules\ContentInterface
 
             $this->description = '<div class="secWarning">' . $this->app->getDef('module_content_account_error_main_app') . '</div>' . $this->description;
         }
+
+        if (!defined('OSCOM_APP_PAYPAL_BT_CC_TOKENS') || (OSCOM_APP_PAYPAL_BT_CC_TOKENS == '0')) {
+            $this->enabled = false;
+        }
     }
 
     public function execute()

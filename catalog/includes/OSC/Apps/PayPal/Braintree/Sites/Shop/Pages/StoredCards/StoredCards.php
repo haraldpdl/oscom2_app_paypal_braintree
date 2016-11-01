@@ -30,7 +30,7 @@ class StoredCards extends \OSC\OM\PagesAbstract
         if (defined('MODULE_PAYMENT_INSTALLED') && !empty(MODULE_PAYMENT_INSTALLED) && in_array('PayPal\Braintree\BT', explode(';', MODULE_PAYMENT_INSTALLED))) {
             $this->pm = new PaymentModuleBT();
 
-            if (!$this->pm->enabled) {
+            if ((!$this->pm->enabled) || (OSCOM_APP_PAYPAL_BT_CC_TOKENS == '0')) {
                 OSCOM::redirect('account.php');
             }
         } else {
