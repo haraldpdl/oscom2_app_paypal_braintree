@@ -7,7 +7,7 @@ button_dialog_void = Void &hellip;
 tab_title = Braintree
 
 dialog_capture_title = Capture Payment
-dialog_capture_body = Please enter the full or partial amount to capture.
+dialog_capture_body = Please enter the full or partial amount to capture. Captures can only be performed once.
 dialog_capture_amount_field_title = Amount:
 dialog_capture_button_capture = Capture Amount
 dialog_capture_button_cancel = Cancel
