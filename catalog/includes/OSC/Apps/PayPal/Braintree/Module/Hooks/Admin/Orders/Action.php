@@ -42,40 +42,40 @@ class Action implements \OSC\OM\Modules\HooksInterface
             $Qstatus->execute();
 
             if ($Qstatus->fetch() !== false) {
-                $pp = [];
+                $bt = [];
 
                 foreach (explode("\n", $Qstatus->value('comments')) as $s) {
                     if (!empty($s) && (strpos($s, ':') !== false)) {
                         $entry = explode(':', $s, 2);
 
-                        $pp[trim($entry[0])] = trim($entry[1]);
+                        $bt[trim($entry[0])] = trim($entry[1]);
                     }
                 }
 
-                if (isset($pp['Transaction ID'])) {
+                if (isset($bt['Transaction ID'])) {
                     $Qorder = $this->app->db->prepare('select o.orders_id, o.payment_method, o.currency, o.currency_value, ot.value as total from :table_orders o, :table_orders_total ot where o.orders_id = :orders_id and o.orders_id = ot.orders_id and ot.class = "ot_total"');
                     $Qorder->bindInt(':orders_id', $_GET['oID']);
                     $Qorder->execute();
 
-                    if ((isset($pp['Server']) && ($pp['Server'] !== 'production')) || (strpos($Qorder->value('payment_method'), 'Sandbox') !== false)) {
+                    if ((isset($bt['Server']) && ($bt['Server'] !== 'production')) || (strpos($Qorder->value('payment_method'), 'Sandbox') !== false)) {
                         $this->server = 0;
                     }
 
                     switch ($_GET['tabaction']) {
                         case 'getTransactionDetails':
-                            $this->getTransactionDetails($pp, $Qorder->toArray());
+                            $this->getTransactionDetails($bt, $Qorder->toArray());
                             break;
 
                         case 'doCapture':
-                            $this->doCapture($pp, $Qorder->toArray());
+                            $this->doCapture($bt, $Qorder->toArray());
                             break;
 
                         case 'doVoid':
-                            $this->doVoid($pp, $Qorder->toArray());
+                            $this->doVoid($bt, $Qorder->toArray());
                             break;
 
                         case 'doRefund':
-                            $this->doRefund($pp, $Qorder->toArray());
+                            $this->doRefund($bt, $Qorder->toArray());
                             break;
                     }
 

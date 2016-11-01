@@ -65,13 +65,13 @@ class PageTab implements \OSC\OM\Modules\HooksInterface
                 $Qorder->bindInt(':orders_id', $oID);
                 $Qorder->execute();
 
-                $pp_server = (strpos(strtolower($Qorder->value('payment_method')), 'sandbox') !== false) ? 'sandbox' : 'live';
+                $bt_server = (strpos(strtolower($Qorder->value('payment_method')), 'sandbox') !== false) ? 'sandbox' : 'live';
 
                 $info_button = HTML::button($this->app->getDef('button_details'), 'fa fa-info-circle', OSCOM::link('orders.php', 'page=' . $_GET['page'] . '&oID=' . $oID . '&action=edit&tabaction=getTransactionDetails'), null, 'btn-primary');
                 $capture_button = $this->getCaptureButton($status, $Qorder->toArray());
                 $void_button = $this->getVoidButton($status, $Qorder->toArray());
                 $refund_button = $this->getRefundButton($status, $Qorder->toArray());
-                $braintree_button = HTML::button($this->app->getDef('button_view_at_braintree'), 'fa fa-external-link', 'https://' . ($pp_server == 'sandbox' ? 'sandbox.' : '') . 'braintreegateway.com/merchants/' . ($pp_server == 'sandbox' ? OSCOM_APP_PAYPAL_BRAINTREE_SANDBOX_MERCHANT_ID : OSCOM_APP_PAYPAL_BRAINTREE_MERCHANT_ID) . '/transactions/' . $status['Transaction ID'], ['newwindow' => true], 'btn-info');
+                $braintree_button = HTML::button($this->app->getDef('button_view_at_braintree'), 'fa fa-external-link', 'https://' . ($bt_server == 'sandbox' ? 'sandbox.' : '') . 'braintreegateway.com/merchants/' . ($bt_server == 'sandbox' ? OSCOM_APP_PAYPAL_BRAINTREE_SANDBOX_MERCHANT_ID : OSCOM_APP_PAYPAL_BRAINTREE_MERCHANT_ID) . '/transactions/' . $status['Transaction ID'], ['newwindow' => true], 'btn-info');
 
                 $tab_title = addslashes($this->app->getDef('tab_title'));
 
@@ -293,7 +293,7 @@ EOD;
 
                 while ($Qr->fetch()) {
                     if (preg_match('/^Braintree App\: Refund \(([0-9\.]+)\)\n/', $Qr->value('comments'), $r_matches)) {
-                        $refund_total -= $this->app->formatCurrencyRaw($r_matches[1], $order['currency'], 1);
+                        $refund_total = $this->app->formatCurrencyRaw($refund_total - $r_matches[1], $order['currency'], 1);
                     }
                 }
 
