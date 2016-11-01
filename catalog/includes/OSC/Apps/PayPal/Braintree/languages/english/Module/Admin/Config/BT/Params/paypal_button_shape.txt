@@ -1,0 +1,5 @@
+cfg_bt_paypal_button_shape_title = PayPal Button Shape
+cfg_bt_paypal_button_shape_desc = The shape of the PayPal checkout button.
+
+cfg_bt_paypal_button_shape_pill = Pill
+cfg_bt_paypal_button_shape_rect = Rectangular

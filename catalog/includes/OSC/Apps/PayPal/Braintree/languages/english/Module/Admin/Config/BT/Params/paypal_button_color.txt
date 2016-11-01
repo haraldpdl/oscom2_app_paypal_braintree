@@ -1,0 +1,6 @@
+cfg_bt_paypal_button_color_title = PayPal Button Color
+cfg_bt_paypal_button_color_desc = The color of the PayPal checkout button.
+
+cfg_bt_paypal_button_color_gold = Gold
+cfg_bt_paypal_button_color_blue = Blue
+cfg_bt_paypal_button_color_silver = Silver

@@ -185,6 +185,44 @@ class BT implements \OSC\OM\Modules\PaymentInterface {
 
             $intent = (OSCOM_APP_PAYPAL_BT_TRANSACTION_METHOD == '1') ? 'sale' : 'authorize';
 
+            switch (OSCOM_APP_PAYPAL_BT_PAYPAL_BUTTON_COLOR) {
+                case '2':
+                    $button_color = 'blue';
+                    break;
+
+                case '3':
+                    $button_color = 'silver';
+                    break;
+
+                case '1':
+                default:
+                    $button_color = 'gold';
+            }
+
+            switch (OSCOM_APP_PAYPAL_BT_PAYPAL_BUTTON_SIZE) {
+                case '2':
+                    $button_size = 'small';
+                    break;
+
+                case '3':
+                    $button_size = 'medium';
+                    break;
+
+                case '1':
+                default:
+                    $button_size = 'tiny';
+            }
+
+            switch (OSCOM_APP_PAYPAL_BT_PAYPAL_BUTTON_SHAPE) {
+                case '2':
+                    $button_shape = 'rect';
+                    break;
+
+                case '1':
+                default:
+                    $button_shape = 'pill';
+            }
+
             $oscTemplate->addBlock('<script src="https://js.braintreegateway.com/web/3.2.0/js/client.min.js"></script><script src="https://js.braintreegateway.com/web/3.2.0/js/paypal.min.js"></script>', 'footer_scripts');
 
             $content = <<<EOD
@@ -192,9 +230,9 @@ class BT implements \OSC\OM\Modules\PaymentInterface {
   data-merchant="braintree"
   data-id="paypal-button"
   data-button="checkout"
-  data-color="blue"
-  data-size="medium"
-  data-shape="pill"
+  data-color="{$button_color}"
+  data-size="{$button_size}"
+  data-shape="{$button_shape}"
   data-button_type="submit"
   data-button_disabled="false"
 ></script>
