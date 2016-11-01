@@ -25,19 +25,22 @@ class Braintree extends \OSC\OM\AppAbstract
 
     protected function installCheck()
     {
-        $pm = explode(';', MODULE_PAYMENT_INSTALLED);
-        $pos = array_search($this->vendor . '\\' . $this->code . '\\BT', $pm);
+        if (!defined('OSCOM_APP_PAYPAL_BT_SORT_ORDER')) {
+            $pm = explode(';', MODULE_PAYMENT_INSTALLED);
+            $pos = array_search($this->vendor . '\\' . $this->code . '\\BT', $pm);
 
-        if ($pos === false) {
-            $pm[] = $this->vendor . '\\' . $this->code . '\\BT';
+            if ($pos === false) {
+                $pm[] = $this->vendor . '\\' . $this->code . '\\BT';
 
-            $this->saveCfgParam('MODULE_PAYMENT_INSTALLED', implode(';', $pm));
-        }
+                $this->saveCfgParam('MODULE_PAYMENT_INSTALLED', implode(';', $pm));
+            }
 
-        $Qcheck = $this->db->query('show tables like ":table_customers_braintree_tokens"');
+            $this->saveCfgParam('OSCOM_APP_PAYPAL_BT_SORT_ORDER', '0', 'Sort Order', 'Sort order of display. Lowest is displayed first.');
 
-        if ($Qcheck->fetch() === false) {
-            $sql = <<<EOD
+            $Qcheck = $this->db->query('show tables like ":table_customers_braintree_tokens"');
+
+            if ($Qcheck->fetch() === false) {
+                $sql = <<<EOD
 CREATE TABLE :table_customers_braintree_tokens (
   id int NOT NULL auto_increment,
   customers_id int NOT NULL,
@@ -52,7 +55,8 @@ CREATE TABLE :table_customers_braintree_tokens (
 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 EOD;
 
-            $this->db->exec($sql);
+                $this->db->exec($sql);
+            }
         }
 
         if (!defined('OSCOM_APP_PAYPAL_BT_TRANSACTION_ORDER_STATUS_ID')) {
@@ -79,13 +83,17 @@ EOD;
             }
         }
 
-        $cm = explode(';', MODULE_CONTENT_INSTALLED);
-        $pos = array_search('account/' . $this->vendor . '\\' . $this->code . '\\BT', $cm);
+        if (!defined('OSCOM_APP_PAYPAL_BT_CONTENT_ACCOUNT_SORT_ORDER')) {
+            $cm = explode(';', MODULE_CONTENT_INSTALLED);
+            $pos = array_search('account/' . $this->vendor . '\\' . $this->code . '\\BT', $cm);
 
-        if ($pos === false) {
-            $cm[] = 'account/' . $this->vendor . '\\' . $this->code . '\\BT';
+            if ($pos === false) {
+                $cm[] = 'account/' . $this->vendor . '\\' . $this->code . '\\BT';
 
-            $this->saveCfgParam('MODULE_CONTENT_INSTALLED', implode(';', $cm));
+                $this->saveCfgParam('MODULE_CONTENT_INSTALLED', implode(';', $cm));
+            }
+
+            $this->saveCfgParam('OSCOM_APP_PAYPAL_BT_CONTENT_ACCOUNT_SORT_ORDER', '0', 'Sort Order', 'Sort order of display (lowest to highest).');
         }
     }
 
