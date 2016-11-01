@@ -10,6 +10,7 @@ namespace OSC\Apps\PayPal\Braintree\Module\Payment;
 
 use OSC\OM\Hash;
 use OSC\OM\HTML;
+use OSC\OM\HTTP;
 use OSC\OM\OSCOM;
 use OSC\OM\Registry;
 
@@ -326,6 +327,21 @@ EOD;
         global $oscTemplate, $order;
 
         if (!isset($_SESSION['appPayPalBtNonce']) && (OSCOM_APP_PAYPAL_BT_ENTRY_FORM === '3')) {
+            if ((HTTP::getRequestType() == 'NONSSL') && ((OSCOM_APP_PAYPAL_BT_THREE_D_SECURE === '1') || (OSCOM_APP_PAYPAL_BT_THREE_D_SECURE === '2'))) {
+                if (parse_url(OSCOM::getConfig('http_server'), PHP_URL_SCHEME) == 'https') {
+// prevent redirect loop for incorrectly configured servers
+                    if (!isset($_SESSION['bt_3ds_ssl_check'])) {
+                        $_SESSION['bt_3ds_ssl_check'] = true;
+
+                        OSCOM::redirect('checkout_confirmation.php');
+                    }
+                }
+            }
+
+            if (isset($_SESSION['bt_3ds_ssl_check'])) {
+                unset($_SESSION['bt_3ds_ssl_check']);
+            }
+
             $oscTemplate->addBlock($this->getSubmitCardDetailsJavascript(), 'footer_scripts');
         }
 
