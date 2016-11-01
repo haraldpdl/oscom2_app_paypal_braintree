@@ -323,10 +323,14 @@ EOD;
 
     public function pre_confirmation_check()
     {
-        global $oscTemplate;
+        global $oscTemplate, $order;
 
         if (!isset($_SESSION['appPayPalBtNonce']) && (OSCOM_APP_PAYPAL_BT_ENTRY_FORM === '3')) {
             $oscTemplate->addBlock($this->getSubmitCardDetailsJavascript(), 'footer_scripts');
+        }
+
+        if ($this->isPaymentTypeAccepted('paypal') && isset($_SESSION['appBraintreeCcNonce'])) {
+            $order->info['payment_method'] = '<img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" border="0" alt="PayPal Logo" style="padding: 3px;" />';
         }
     }
 
