@@ -661,10 +661,19 @@ EOD;
         global $insert_id, $braintree_result, $braintree_token;
 
         $status_comment = [
-            'Transaction ID: ' . HTML::sanitize($braintree_result->transaction->id),
-            'Payment Status: ' . HTML::sanitize($braintree_result->transaction->status),
-            'Payment Type: ' . HTML::sanitize($braintree_result->transaction->paymentInstrumentType)
+            'Transaction ID: ' . HTML::sanitize($braintree_result->transaction->id)
         ];
+
+        if (($braintree_result->transaction->paymentInstrumentType == 'credit_card') && ((OSCOM_APP_PAYPAL_BT_THREE_D_SECURE === '1') || ((OSCOM_APP_PAYPAL_BT_THREE_D_SECURE === '2') && !isset($braintree_token)))) {
+            if (isset($braintree_result->transaction->threeDSecureInfo) && is_object($braintree_result->transaction->threeDSecureInfo)) {
+                $status_comment[] = '3D Secure: ' . HTML::sanitize($braintree_result->transaction->threeDSecureInfo->status . ' (Liability Shifted: ' . ($braintree_result->transaction->threeDSecureInfo->liabilityShifted === true ? 'true' : 'false') . ')');
+            } else {
+                $status_comment[] = '3D Secure: ** MISSING **';
+            }
+        }
+
+        $status_comment[] = 'Payment Status: ' . HTML::sanitize($braintree_result->transaction->status);
+        $status_comment[] = 'Payment Type: ' . HTML::sanitize($braintree_result->transaction->paymentInstrumentType);
 
         if (\Braintree\Configuration::$global->getEnvironment() !== 'production') {
             $status_comment[] = 'Server: ' . HTML::sanitize(\Braintree\Configuration::$global->getEnvironment());

@@ -100,11 +100,24 @@ class Action implements \OSC\OM\Modules\HooksInterface
         }
 
         if (($error === false) && is_object($response) && (get_class($response) == 'Braintree\\Transaction') && isset($response->id) && ($response->id == $comments['Transaction ID'])) {
-            $result = 'Transaction ID: ' . HTML::sanitize($response->id) . "\n" .
-                      'Payment Status: ' . HTML::sanitize($response->status) . "\n" .
-                      'Payment Type: ' . HTML::sanitize($response->paymentInstrumentType) . "\n" .
-                      'Status History:';
+            $result = 'Transaction ID: ' . HTML::sanitize($response->id) . "\n";
 
+            if (($response->paymentInstrumentType == 'credit_card') && isset($comments['3D Secure'])) {
+                if (isset($response->threeDSecureInfo) && is_object($response->threeDSecureInfo)) {
+                    $result .= '3D Secure: ' . HTML::sanitize($response->threeDSecureInfo->status . ' (Liability Shifted: ' . ($response->threeDSecureInfo->liabilityShifted === true ? 'true' : 'false') . ')') . "\n";
+                } else {
+                    $result .= '3D Secure: ** MISSING **' . "\n";
+                }
+            }
+
+            $result .= 'Payment Status: ' . HTML::sanitize($response->status) . "\n" .
+                       'Payment Type: ' . HTML::sanitize($response->paymentInstrumentType) . "\n";
+
+            if ($this->server === 0) {
+                $result .= 'Server: sandbox' . "\n";
+            }
+
+            $result .= 'Status History:';
 
             foreach ($response->statusHistory as $sh) {
                 $sh->timestamp->setTimezone(new \DateTimeZone(date_default_timezone_get()));
