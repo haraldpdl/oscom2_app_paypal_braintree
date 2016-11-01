@@ -18,7 +18,7 @@ dialog_void_button_void = Void Payment
 dialog_void_button_cancel = Cancel
 
 dialog_refund_title = Refund Payment
-dialog_refund_body = Please enter the full or partial amount to refund.
+dialog_refund_body = Please enter the full or partial amount to refund. Leaving the amount empty will perform a full refund.
 dialog_refund_amount_field_title = Refund:
 dialog_refund_button_refund = Refund Payment
 dialog_refund_button_cancel = Cancel
