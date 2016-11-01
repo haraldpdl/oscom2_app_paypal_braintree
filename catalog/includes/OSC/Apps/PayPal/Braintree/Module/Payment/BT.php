@@ -347,7 +347,7 @@ EOD;
             $oscTemplate->addBlock($this->getSubmitCardDetailsJavascript(), 'footer_scripts');
         }
 
-        if ($this->isPaymentTypeAccepted('paypal') && isset($_SESSION['appBraintreeCcNonce'])) {
+        if ($this->isPaymentTypeAccepted('paypal') && isset($_SESSION['appPayPalBtNonce'])) {
             $order->info['payment_method'] = '<img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" border="0" alt="PayPal Logo" style="padding: 3px;" />';
         }
     }
