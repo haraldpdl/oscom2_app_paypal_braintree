@@ -8,7 +8,9 @@
 
 namespace OSC\Apps\PayPal\Braintree\Sites\Shop\Pages\BT;
 
+use OSC\OM\Hash;
 use OSC\OM\HTML;
+use OSC\OM\Mail;
 use OSC\OM\OSCOM;
 use OSC\OM\Registry;
 
@@ -109,10 +111,10 @@ class BT extends \OSC\OM\PagesAbstract
 
 // Only generate a password and send an email if the Set Password Content Module is not enabled
                         if (!defined('MODULE_CONTENT_ACCOUNT_SET_PASSWORD_STATUS') || (MODULE_CONTENT_ACCOUNT_SET_PASSWORD_STATUS != 'True')) {
-                            $customer_password = tep_create_random_value(max(ENTRY_PASSWORD_MIN_LENGTH, 8));
+                            $customer_password = Hash::getRandomString(max(ENTRY_PASSWORD_MIN_LENGTH, 8));
 
                             $this->pm->app->db->save('customers', [
-                                'customers_password' => tep_encrypt_password($customer_password)
+                                'customers_password' => Hash::encrypt($customer_password)
                             ], [
                                 'customers_id' => $_SESSION['customer_id']
                             ]);
@@ -128,7 +130,10 @@ class BT extends \OSC\OM\PagesAbstract
                                           EMAIL_TEXT .
                                           EMAIL_CONTACT .
                                           EMAIL_WARNING;
-                            tep_mail($name, $email_address, EMAIL_SUBJECT, $email_text, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS);
+
+                            $passwordEmail = new Mail($email_address, $name, STORE_OWNER_EMAIL_ADDRESS, STORE_OWNER, EMAIL_SUBJECT);
+                            $passwordEmail->setBody($email_text);
+                            $passwordEmail->send();
                         }
                     }
 
