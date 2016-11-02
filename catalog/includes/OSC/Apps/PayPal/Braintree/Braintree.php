@@ -105,6 +105,16 @@ EOD;
         \Braintree\Configuration::merchantId($status === '1' ? OSCOM_APP_PAYPAL_BRAINTREE_MERCHANT_ID : OSCOM_APP_PAYPAL_BRAINTREE_SANDBOX_MERCHANT_ID);
         \Braintree\Configuration::publicKey($status === '1' ? OSCOM_APP_PAYPAL_BRAINTREE_PUBLIC_KEY : OSCOM_APP_PAYPAL_BRAINTREE_SANDBOX_PUBLIC_KEY);
         \Braintree\Configuration::privateKey($status === '1' ? OSCOM_APP_PAYPAL_BRAINTREE_PRIVATE_KEY : OSCOM_APP_PAYPAL_BRAINTREE_SANDBOX_PRIVATE_KEY);
+
+        if (!empty(OSCOM_HTTP_PROXY)) {
+            $url = parse_url(OSCOM_HTTP_PROXY);
+
+            \Braintree\Configuration::proxyHost($url['host']);
+
+            if (isset($url['port'])) {
+                \Braintree\Configuration::proxyPort($url['port']);
+            }
+        }
     }
 
     public function formatCurrencyRaw($total, $currency_code = null, $currency_value = null)
