@@ -1,1 +1,4 @@
+app_link_info = Info/Help
+app_link_privacy = Privacy
+
 button_save = Save

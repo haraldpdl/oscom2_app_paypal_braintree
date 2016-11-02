@@ -1,0 +1,18 @@
+page_title = Privacy Policy
+
+privacy_body = <h3>PayPal Modules</h3>
+
+<p>Braintree modules send store owner, online store, and customer related information to Braintree to process API transactions. These include the following modules:</p>
+
+<ul>
+  <li>Braintree Credit Cards</li>
+</ul>
+
+<p>The following information is included in API calls sent to Braintree:</p>
+
+<ul>
+  <li>Braintree merchant account information of the seller / store owner.</li>
+  <li>Customer shipping and billing addresses.</li>
+  <li>The order total and currency.</li>
+  <li>E-Commerce solution identification.</li>
+</ul>
