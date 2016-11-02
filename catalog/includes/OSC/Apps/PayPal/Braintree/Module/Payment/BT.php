@@ -688,8 +688,8 @@ EOD;
         $status_comment[] = 'Payment Status: ' . HTML::sanitize($braintree_result->transaction->status);
         $status_comment[] = 'Payment Type: ' . HTML::sanitize($braintree_result->transaction->paymentInstrumentType);
 
-        if (\Braintree\Configuration::$global->getEnvironment() !== 'production') {
-            $status_comment[] = 'Server: ' . HTML::sanitize(\Braintree\Configuration::$global->getEnvironment());
+        if (\Braintree\Configuration::environment() !== 'production') {
+            $status_comment[] = 'Server: ' . HTML::sanitize(\Braintree\Configuration::environment());
         }
 
         if (!isset($_SESSION['appPayPalBtNonce']) && (((OSCOM_APP_PAYPAL_BT_CC_TOKENS == '1') && isset($_POST['cc_save']) && ($_POST['cc_save'] == 'true')) || (OSCOM_APP_PAYPAL_BT_CC_TOKENS === '2')) && !isset($braintree_token) && isset($braintree_result->transaction->creditCard['token'])) {
