@@ -121,15 +121,15 @@ class BT extends \OSC\OM\PagesAbstract
 
 // build the message content
                             $name = $customers_firstname . ' ' . $customers_lastname;
-                            $email_text = sprintf(EMAIL_GREET_NONE, $customers_firstname) .
-                                          EMAIL_WELCOME .
-                                          $this->pm->app->getDef('module_ec_email_account_password', [
+                            $email_text = OSCOM::getDef('email_greet_none', ['firstname' => $customers_firstname]) . "\n\n" .
+                                          OSCOM::getDef('email_welcome', ['store_name' => STORE_NAME]) . "\n\n" .
+                                          $this->pm->app->getDef('email_account_password', [
                                               'email_address' => $email_address,
                                               'password' => $customer_password
                                           ]) . "\n\n" .
-                                          EMAIL_TEXT .
-                                          EMAIL_CONTACT .
-                                          EMAIL_WARNING;
+                                          OSCOM::getDef('email_text') . "\n\n" .
+                                          OSCOM::getDef('email_contact', ['store_email_address' => STORE_OWNER_EMAIL_ADDRESS]) . "\n\n" .
+                                          OSCOM::getDef('email_warning', ['store_email_address' => STORE_OWNER_EMAIL_ADDRESS]) . "\n";
 
                             $passwordEmail = new Mail($email_address, $name, STORE_OWNER_EMAIL_ADDRESS, STORE_OWNER, EMAIL_SUBJECT);
                             $passwordEmail->setBody($email_text);
@@ -326,7 +326,7 @@ class BT extends \OSC\OM\PagesAbstract
 
                             if (is_object($GLOBALS[$module]) || ($_SESSION['shipping'] == 'free_free')) {
                                 if ($_SESSION['shipping'] == 'free_free') {
-                                    $quote[0]['methods'][0]['title'] = FREE_SHIPPING_TITLE;
+                                    $quote[0]['methods'][0]['title'] = OSCOM::getDef('free_shipping_title');
                                     $quote[0]['methods'][0]['cost'] = '0';
                                 } else {
                                     $quote = $shipping_modules->quote($method, $module);

@@ -29,3 +29,8 @@ card_error_avs_and_cvv = There was a problem processing the card with the billin
 card_error_all_fields_required = Please fill out the payment information fields to purchase this order.
 card_error_fields_required = Please fill out the payment information fields to purchase this order.
 card_error_tmp_processing_problem = The card could not be processed at this time. Please try again and if problems persist, contact us or try with another card.
+
+email_account_password = An account has automatically been created for you with the following e-mail address and password:
+
+Store Account E-Mail Address: {{email_address}}
+Store Account Password: {{password}}
