@@ -43,7 +43,7 @@ class BT implements \OSC\OM\Modules\ContentInterface
         if (in_array('PayPal\Braintree\BT', explode(';', MODULE_PAYMENT_INSTALLED))) {
             $braintree_enabled = true;
 
-            if (OSCOM_APP_PAYPAL_BT_STATUS === '0') {
+            if (defined('OSCOM_APP_PAYPAL_BT_STATUS') && (OSCOM_APP_PAYPAL_BT_STATUS === '0')) {
                 $this->title .= ' [Sandbox]';
                 $this->public_title .= ' (' . $this->app->vendor . '\\' . $this->app->code . '\\' . $this->code . '; Sandbox)';
             }
