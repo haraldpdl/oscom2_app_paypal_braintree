@@ -2,6 +2,10 @@
 
 ## Changelog
 
+**v2.011 05-Mar-2017**
+
+* Fix usage of empty() calls that checked on constant values.
+
 **v2.010 01-Mar-2017**
 
 * Add new general App parameter to test and use the default server configured SSL version when performing API requests to Braintrees servers or force TLS v1.2 connections. (TLS v1.2 connections are required from June 30, 2017)
